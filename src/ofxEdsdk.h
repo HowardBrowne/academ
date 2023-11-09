@@ -1,7 +1,13 @@
 #pragma once
 
+/*
+	ofxEdsdk lets OF talk to Canon cameras using a simple interface.
+*/
+
 #include "ofMain.h"
-#include "EDSDKStringHelper.h"
+#include "EDSDKWrapper.h"
+
+#define safe(x, y) if(err == EDS_ERR_OK) {err = y; handleError(err, x);}
 
 namespace ofxEdsdk {
 	
@@ -29,6 +35,7 @@ namespace ofxEdsdk {
 		void setLiveViewReady(bool liveViewReady);
 		
 	protected:
+	
 		EdsError err;
 		EdsCameraListRef cameraList;
 		EdsCameraRef camera;

@@ -4,7 +4,7 @@ namespace ofxEdsdk {
 	
 	void handleError(EdsError err, string msg) {
 		if(err != EDS_ERR_OK) {
-			cout << msg << " returned " << getEdsErrorString(err) << endl;
+			cout << msg << " returned " << EDSDK::getErrorString(err) << endl;
 		}
 	}
 	
@@ -20,7 +20,7 @@ namespace ofxEdsdk {
 	 property event: kEdsPropID_MeteringMode / 0
 	 */
 	EdsError EDSCALLBACK handlePropertyEvent(EdsPropertyEvent event, EdsPropertyID propertyId, EdsUInt32 param, EdsVoid* context) {
-		cout << "property event: " << getEdsPropertyString(propertyId) << " / " << param << endl;
+		cout << "property event: " << EDSDK::getPropertyString(propertyId) << " / " << param << endl;
 		
 		if(propertyId == kEdsPropID_Evf_OutputDevice) {
 			((Camera*) context)->setLiveViewReady(true);
