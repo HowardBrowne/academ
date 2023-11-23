@@ -1,4 +1,4 @@
-#include "StringHelper.h"
+#include "EDSDKStrings.h"
 
 namespace EDSDK {
 	

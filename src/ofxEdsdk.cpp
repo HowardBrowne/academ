@@ -132,6 +132,7 @@ namespace ofxEdsdk {
 	}
 	
 	Camera::Camera() :
+	connected(false),
 	liveViewReady(false),
 	frameNew(false) {
 	}
@@ -149,35 +150,41 @@ namespace ofxEdsdk {
 	}
 	
 	void Camera::setup() {
-		cout << "EdsInitializeSDK()" << endl;
-		err = EdsInitializeSDK();
-		handleError(err, "EdsInitializeSDK");
-		
-		EdsCameraListRef cameraList;
-		err = EdsGetCameraList(&cameraList);
-		
-		EdsUInt32 cameraCount;
-		cout << "EdsGetChildCount()" << endl;
-		err = EdsGetChildCount(cameraList, &cameraCount);
-		handleError(err, "EdsGetChildCount");
-		
-		cout << "Camera count: " << cameraCount << endl;
-		
-		EdsInt32 cameraIndex = 0;
-		cout << "EdsGetChildAtIndex()" << endl;
-		err = EdsGetChildAtIndex(cameraList, cameraIndex, &camera);
-		handleError(err, "EdsGetChildAtIndex");
-		
-		cout << "EdsSetPropertyEventHandler()" << endl;
-		err = EdsSetPropertyEventHandler(camera,	kEdsPropertyEvent_All, handlePropertyEvent, this);
-		handleError(err, "EdsSetPropertyEventHandler");
-		
-		cout << "EdsOpenSession()" << endl;
-		err = EdsOpenSession(camera);
-		handleError(err, "EdsOpenSession");
-		
-		cout << "starting live view" << endl;
-		startLiveview(camera);
+		try {
+			cout << "EdsInitializeSDK()" << endl;
+			EDSDK::InitializeSDK();
+			
+			EdsCameraListRef cameraList;
+			EDSDK::GetCameraList(&cameraList);
+			
+			UInt32 cameraCount;
+			cout << "GetChildCount()" << endl;
+			EDSDK::GetChildCount(cameraList, &cameraCount);
+			
+			cout << "Camera count: " << cameraCount << endl;
+			
+			if(cameraCount > 0) {				
+				EdsInt32 cameraIndex = 0;
+				cout << "GetChildAtIndex()" << endl;
+				EDSDK::GetChildAtIndex(cameraList, cameraIndex, &camera);
+				
+				cout << "SetPropertyEventHandler()" << endl;
+				EDSDK::SetPropertyEventHandler(camera,	kEdsPropertyEvent_All, handlePropertyEvent, this);
+				
+				cout << "OpenSession()" << endl;
+				EDSDK::OpenSession(camera);
+				
+				startLiveview(camera);
+				
+				connected = true;
+			} else {
+				ofLog(OF_LOG_ERROR, "No cameras are connected for ofxEdsdk::Camera::setup().");
+			}
+		} catch (EDSDK::Exception& e) {
+			stringstream errMsg;
+			errMsg << "EDSDK Exception during Camera::setup(): " << e.what();
+			ofLog(OF_LOG_ERROR, errMsg.str());
+		}
 	}
 	
 	void Camera::update() {
@@ -234,6 +241,10 @@ namespace ofxEdsdk {
 			ofDrawBitmapString(status.str(), 10, 20);
 			ofPopMatrix();
 		}
+	}
+	
+	bool Camera::isConnected() const {
+		return connected;
 	}
 	
 	void Camera::setLiveViewReady(bool liveViewReady) {

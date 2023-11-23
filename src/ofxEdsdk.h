@@ -13,7 +13,7 @@ namespace ofxEdsdk {
 	
 	/*
 		Camera is currently not threaded, so
-		update() blocks and isFrameNew() is true.
+		update() blocks and isFrameNew() is always true.
 	*/
 	
 	class Camera {
@@ -32,6 +32,7 @@ namespace ofxEdsdk {
 		const ofPixels& getPixelsRef() const;
 		ofPixels& getPixelsRef();
 		
+		bool isConnected() const;
 		void setLiveViewReady(bool liveViewReady);
 		
 	protected:
@@ -42,6 +43,7 @@ namespace ofxEdsdk {
 		
 		ofPixels livePixels;
 		ofTexture liveTexture;
+		bool connected;
 		bool liveViewReady;
 		bool frameNew;
 	};
