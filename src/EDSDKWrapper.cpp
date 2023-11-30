@@ -1,6 +1,6 @@
-#include "EDSDKWrapper.h"
+#include "EdsdkWrapper.h"
 
-namespace EDSDK {
+namespace Edsdk {
 	void InitializeSDK(){EdsError err = EdsInitializeSDK(); if(err != EDS_ERR_OK) {throw Exception(err);}}
 	void TerminateSDK(){EdsError err = EdsTerminateSDK(); if(err != EDS_ERR_OK) {throw Exception(err);}}
 	void GetChildCount(EdsBaseRef inRef, EdsUInt32* outCount) {EdsError err = EdsGetChildCount(inRef, outCount); if(err != EDS_ERR_OK) {throw Exception(err);}}

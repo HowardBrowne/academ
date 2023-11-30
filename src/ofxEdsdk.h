@@ -5,7 +5,7 @@
 */
 
 #include "ofMain.h"
-#include "EDSDKWrapper.h"
+#include "EdsdkWrapper.h"
 
 #define safe(x, y) if(err == EDS_ERR_OK) {err = y; handleError(err, x);}
 

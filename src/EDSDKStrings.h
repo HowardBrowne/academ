@@ -1,9 +1,9 @@
 #pragma once
 
-#include "EDSDKWrapper.h"
+#include "EdsdkWrapper.h"
 #include <string>
 
-namespace EDSDK {
+namespace Edsdk {
 	
 	std::string getErrorString(EdsError error);
 	std::string getPropertyString(EdsPropertyID property);

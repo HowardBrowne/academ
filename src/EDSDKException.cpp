@@ -1,6 +1,6 @@
-#include "EDSDKException.h"
+#include "EdsdkException.h"
 
-namespace EDSDK {
+namespace Edsdk {
 	Exception::Exception(const EdsError& err) throw() : err(err), errString(getErrorString(err)) {
 	}
 	Exception::~Exception() throw() {

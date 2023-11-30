@@ -1,19 +1,20 @@
 #pragma once
 /*
- EDSDKWrapper is a collection of functions that add Exceptions to the standard EDSDK collection.
- This is the only file that should reference EDSDK.
+ EdsdkWrapper is a collection of functions that add Exceptions to the standard Edsdk collection.
+ This is the only file that should reference Edsdk.
  */
 
 #define __MACOS__
 #include "EDSDK.h"
 #include "EDSDKErrors.h"
 #include "EDSDKTypes.h"
-#include "EDSDKStrings.h"
-#include "EDSDKException.h"
+
+#include "EdsdkStrings.h"
+#include "EdsdkException.h"
 
 #include "ofxEdsdk.h"
 
-namespace EDSDK {
+namespace Edsdk {
 	void InitializeSDK();
 	void TerminateSDK();
 	void GetChildCount(EdsBaseRef inRef, EdsUInt32* outCount);

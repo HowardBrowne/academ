@@ -1,6 +1,6 @@
-#include "EDSDKStrings.h"
+#include "EdsdkStrings.h"
 
-namespace EDSDK {
+namespace Edsdk {
 	
 	std::string getErrorString(EdsError error) {
 		switch(error) {
