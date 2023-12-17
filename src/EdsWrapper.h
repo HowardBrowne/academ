@@ -9,12 +9,14 @@
 #include "EDSDKErrors.h"
 #include "EDSDKTypes.h"
 
-#include "EdsdkStrings.h"
-#include "EdsdkException.h"
+#include "EdsStrings.h"
+#include "EdsException.h"
 
 #include "ofxEdsdk.h"
 
-namespace Edsdk {
+namespace Eds {
+	void Retain(EdsBaseRef inRef);
+	void Release(EdsBaseRef inRef);
 	void InitializeSDK();
 	void TerminateSDK();
 	void GetChildCount(EdsBaseRef inRef, EdsUInt32* outCount);

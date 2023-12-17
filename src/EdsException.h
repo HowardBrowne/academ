@@ -3,14 +3,14 @@
 #include <typeinfo>
 #include <string>
 
-#include "EdsdkWrapper.h"
+#include "EdsWrapper.h"
 
 /*
 	even more useful would be to go through the different error codes and make a class for each,
 	or at least for subsets. this would take a little longer.
 */
 
-namespace Edsdk {
+namespace Eds {
 	class Exception : public std::exception {
 	public:
 		Exception(const EdsError& err) throw();

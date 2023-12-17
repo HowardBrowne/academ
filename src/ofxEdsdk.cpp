@@ -2,12 +2,6 @@
 
 namespace ofxEdsdk {
 	
-	void handleError(EdsError err, string msg) {
-		if(err != EDS_ERR_OK) {
-			cout << msg << " returned " << Edsdk::getErrorString(err) << endl;
-		}
-	}
-	
 	/*
 	 After calling startLiveView, we get:
 	 property event: kEdsPropID_Evf_OutputDevice / 0
@@ -20,7 +14,7 @@ namespace ofxEdsdk {
 	 property event: kEdsPropID_MeteringMode / 0
 	 */
 	EdsError EDSCALLBACK handlePropertyEvent(EdsPropertyEvent event, EdsPropertyID propertyId, EdsUInt32 param, EdsVoid* context) {
-		cout << "property event: " << Edsdk::getPropertyString(propertyId) << " / " << param << endl;
+		cout << "property event: " << Eds::getPropertyString(propertyId) << " / " << param << endl;
 		
 		if(propertyId == kEdsPropID_Evf_OutputDevice) {
 			((Camera*) context)->setLiveViewReady(true);
@@ -30,89 +24,73 @@ namespace ofxEdsdk {
 	EdsError startLiveview(EdsCameraRef camera) {
 		// Get the output device for the live view image
 		EdsUInt32 device;
-		Edsdk::GetPropertyData(camera, kEdsPropID_Evf_OutputDevice, 0, sizeof(device), &device);
+		Eds::GetPropertyData(camera, kEdsPropID_Evf_OutputDevice, 0, sizeof(device), &device);
 		
 		// PC live view starts by setting the PC as the output device for the live view image.
 		device |= kEdsEvfOutputDevice_PC;
-		Edsdk::SetPropertyData(camera, kEdsPropID_Evf_OutputDevice, 0, sizeof(device), &device);
+		Eds::SetPropertyData(camera, kEdsPropID_Evf_OutputDevice, 0, sizeof(device), &device);
 		
 		// A property change event notification is issued from the camera if property settings are made successfully.
 		// Start downloading of the live view image once the property change notification arrives.
 	}
 	
-	EdsError downloadEvfData(EdsCameraRef camera, ofPixels& pixels) {
-		EdsError err = EDS_ERR_OK;
+	bool downloadEvfData(EdsCameraRef camera, ofPixels& pixels) {
 		EdsStreamRef stream = NULL;
 		EdsEvfImageRef evfImage = NULL;
+		bool frameNew = false;
 		
-		//	Create memory stream.
-		// This automatically allocates the stream if it's unallocated.
-		// If you want to save some time, avoid reallocation by keeping the EdsStreamRef around.
-		// Alternatively, you can prepare the memory yourself and use EdsCreateMemoryStreamFromPointer.
-		if(err == EDS_ERR_OK) {
-			err = EdsCreateMemoryStream(0, &stream);
-			handleError(err, "EdsCreateMemoryStream");
-		}
-		
-		//	Create EvfImageRef.
-		if(err == EDS_ERR_OK) {
-			err = EdsCreateEvfImageRef(stream, &evfImage);
-			handleError(err, "EdsCreateEvfImageRef");
-		}
-		
-		// Download live view image data.
-		if(err == EDS_ERR_OK) {
-			err = EdsDownloadEvfImage(camera, evfImage);
-			handleError(err, "EdsDownloadEvfImage");
-		}
-		
-		// Get the image data.
-		EdsUInt32 length;
-		if(err == EDS_ERR_OK) {
-			EdsGetLength(stream, &length);
-			handleError(err, "EdsGetLength");
-		}
-		
-		char* streamPointer;
-		if(err == EDS_ERR_OK) {
-			EdsGetPointer(stream, (EdsVoid**) &streamPointer);
-			handleError(err, "EdsGetPointer");
-		}
-		
-		if(err == EDS_ERR_OK) {
+		try {
+			//	Create memory stream.
+			// This automatically allocates the stream if it's unallocated.
+			// If you want to save some time, avoid reallocation by keeping the EdsStreamRef around.
+			// Alternatively, you can prepare the memory yourself and use EdsCreateMemoryStreamFromPointer.
+			Eds::CreateMemoryStream(0, &stream);
+			
+			//	Create EvfImageRef.
+			Eds::CreateEvfImageRef(stream, &evfImage);
+			
+			// Download live view image data.
+			Eds::DownloadEvfImage(camera, evfImage);
+			
+			// Get the image data.
+			EdsUInt32 length;
+			Eds::GetLength(stream, &length);
+			
+			char* streamPointer;
+			Eds::GetPointer(stream, (EdsVoid**) &streamPointer);
+			
 			cout << "Copying image (" << length << ") to ofBuffer" << endl;
 			ofBuffer imageBuffer;
 			imageBuffer.set(streamPointer, length);
 			
 			ofLoadImage(pixels, imageBuffer);
+			
+			frameNew = true;
+		} catch (Eds::Exception& e) {
+			stringstream err;
+			err << "There was an error downloading the live view data:" << e.what() << endl;
+			ofLog(OF_LOG_ERROR, err.str());
 		}
 		
-		/*
-		 // Get the metadata of the image.
-		 // Get the zoom ratio
-		 EdsUInt32 zoom;
-		 EdsGetPropertyData(evfImage, kEdsPropID_Evf_ZoomPosition, 0 , sizeof(zoom), &zoom);
-		 
-		 // Get the focus and zoom border position
-		 EdsPoint point;
-		 EdsGetPropertyData(evfImage, kEdsPropID_Evf_ZoomPosition, 0 , sizeof(point), &point);
-		 */
-		
-		// Release stream
-		if(stream != NULL) {
-			EdsRelease(stream);
-			handleError(err, "EdsRelease");
-			stream = NULL;
+		try {
+			// Release stream
+			if(stream != NULL) {
+				Eds::Release(stream);
+				stream = NULL;
+			}
+			
+			// Release evfImage
+			if(evfImage != NULL) {
+				Eds::Release(evfImage);
+				evfImage = NULL;
+			}
+		} catch (Eds::Exception& e) {
+			stringstream err;
+			err << "There was an error releasing the live view data:" << e.what() << endl;
+			ofLog(OF_LOG_ERROR, err.str());
 		}
 		
-		// Release evfImage
-		if(evfImage != NULL) {
-			EdsRelease(evfImage);
-			handleError(err, "EdsRelease");
-			evfImage = NULL;
-		}
-		
-		return err;
+		return frameNew;
 	}
 	
 	EdsError endLiveview(EdsCameraRef camera) {
@@ -140,37 +118,38 @@ namespace ofxEdsdk {
 			}
 			
 			try {
-				Edsdk::CloseSession(camera);
-				Edsdk::TerminateSDK();
-			} catch (Edsdk::Exception& e) {
+				Eds::CloseSession(camera);
+				Eds::TerminateSDK();
+			} catch (Eds::Exception& e) {
 				stringstream err;
-				err << "There was an error destroyed ofxEdsdk::Camera: " << e.what() << endl;
+				err << "There was an error destroying ofxEds::Camera: " << e.what() << endl;
+				ofLog(OF_LOG_ERROR, err.str());
 			}
 		}
 	}
 	
 	void Camera::setup() {
 		try {
-			Edsdk::InitializeSDK();
+			Eds::InitializeSDK();
 			
 			EdsCameraListRef cameraList;
-			Edsdk::GetCameraList(&cameraList);
+			Eds::GetCameraList(&cameraList);
 			
 			UInt32 cameraCount;
-			Edsdk::GetChildCount(cameraList, &cameraCount);
+			Eds::GetChildCount(cameraList, &cameraCount);
 			
 			if(cameraCount > 0) {				
 				EdsInt32 cameraIndex = 0;
-				Edsdk::GetChildAtIndex(cameraList, cameraIndex, &camera);
-				Edsdk::SetPropertyEventHandler(camera,	kEdsPropertyEvent_All, handlePropertyEvent, this);
-				Edsdk::OpenSession(camera);
+				Eds::GetChildAtIndex(cameraList, cameraIndex, &camera);
+				Eds::SetPropertyEventHandler(camera,	kEdsPropertyEvent_All, handlePropertyEvent, this);
+				Eds::OpenSession(camera);
 				startLiveview(camera);
 				
 				connected = true;
 			} else {
-				ofLog(OF_LOG_ERROR, "No cameras are connected for ofxEdsdk::Camera::setup().");
+				ofLog(OF_LOG_ERROR, "No cameras are connected for ofxEds::Camera::setup().");
 			}
-		} catch (Edsdk::Exception& e) {
+		} catch (Eds::Exception& e) {
 			stringstream errMsg;
 			errMsg << "Edsdk Exception during Camera::setup(): " << e.what();
 			ofLog(OF_LOG_ERROR, errMsg.str());
@@ -180,9 +159,8 @@ namespace ofxEdsdk {
 	void Camera::update() {
 		if(liveViewReady) {
 			cout << "downloadEvfData()" << endl;
-			err = downloadEvfData(camera, livePixels);
-			if(err == EDS_ERR_OK) {
-				frameNew = true;
+			frameNew = downloadEvfData(camera, livePixels);
+			if(frameNew) {
 				if(liveTexture.getWidth() != livePixels.getWidth() ||
 					 liveTexture.getHeight() != livePixels.getHeight()) {
 					liveTexture.allocate(livePixels.getWidth(), livePixels.getHeight(), GL_RGB8);
