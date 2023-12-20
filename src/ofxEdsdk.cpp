@@ -21,17 +21,23 @@ namespace ofxEdsdk {
 		}
 	}
 	
-	EdsError startLiveview(EdsCameraRef camera) {
-		// Get the output device for the live view image
-		EdsUInt32 device;
-		Eds::GetPropertyData(camera, kEdsPropID_Evf_OutputDevice, 0, sizeof(device), &device);
-		
-		// PC live view starts by setting the PC as the output device for the live view image.
-		device |= kEdsEvfOutputDevice_PC;
-		Eds::SetPropertyData(camera, kEdsPropID_Evf_OutputDevice, 0, sizeof(device), &device);
-		
-		// A property change event notification is issued from the camera if property settings are made successfully.
-		// Start downloading of the live view image once the property change notification arrives.
+	void startLiveview(EdsCameraRef camera) {
+		try {
+			// Get the output device for the live view image
+			EdsUInt32 device;
+			Eds::GetPropertyData(camera, kEdsPropID_Evf_OutputDevice, 0, sizeof(device), &device);
+			
+			// PC live view starts by setting the PC as the output device for the live view image.
+			device |= kEdsEvfOutputDevice_PC;
+			Eds::SetPropertyData(camera, kEdsPropID_Evf_OutputDevice, 0, sizeof(device), &device);
+			
+			// A property change event notification is issued from the camera if property settings are made successfully.
+			// Start downloading of the live view image once the property change notification arrives.
+		} catch (Eds::Exception& e) {
+			stringstream err;
+			err << "There was an error starting live view: " << e.what() << endl;
+			ofLog(OF_LOG_ERROR, err.str());
+		}
 	}
 	
 	bool downloadEvfData(EdsCameraRef camera, ofPixels& pixels) {
@@ -86,22 +92,26 @@ namespace ofxEdsdk {
 			}
 		} catch (Eds::Exception& e) {
 			stringstream err;
-			err << "There was an error releasing the live view data:" << e.what() << endl;
+			err << "There was an error releasing the live view data: " << e.what() << endl;
 			ofLog(OF_LOG_ERROR, err.str());
 		}
 		
 		return frameNew;
 	}
 	
-	EdsError endLiveview(EdsCameraRef camera) {
-		EdsError err = EDS_ERR_OK;
-		// Get the output device for the live view image
-		EdsUInt32 device;
-		err = EdsGetPropertyData(camera, kEdsPropID_Evf_OutputDevice, 0, sizeof(device), &device );
-		// PC live view ends if the PC is disconnected from the live view image output device.
-		if(err == EDS_ERR_OK) {
+	void endLiveview(EdsCameraRef camera) {
+		try {
+			// Get the output device for the live view image
+			EdsUInt32 device;
+			Eds::GetPropertyData(camera, kEdsPropID_Evf_OutputDevice, 0, sizeof(device), &device);
+			
+			// PC live view ends if the PC is disconnected from the live view image output device.
 			device &= ~kEdsEvfOutputDevice_PC;
-			err = EdsSetPropertyData(camera, kEdsPropID_Evf_OutputDevice, 0 , sizeof(device), &device);
+			Eds::SetPropertyData(camera, kEdsPropID_Evf_OutputDevice, 0 , sizeof(device), &device);
+		} catch (Eds::Exception& e) {
+			stringstream err;
+			err << "There was an error closing the live view stream: " << e.what() << endl;
+			ofLog(OF_LOG_ERROR, err.str());
 		}
 	}
 	
@@ -151,7 +161,7 @@ namespace ofxEdsdk {
 			}
 		} catch (Eds::Exception& e) {
 			stringstream errMsg;
-			errMsg << "Edsdk Exception during Camera::setup(): " << e.what();
+			errMsg << "There was an error during Camera::setup(): " << e.what();
 			ofLog(OF_LOG_ERROR, errMsg.str());
 		}
 	}

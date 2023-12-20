@@ -35,7 +35,6 @@ namespace ofxEdsdk {
 		
 	protected:
 	
-		EdsError err;
 		EdsCameraListRef cameraList;
 		EdsCameraRef camera;
 		

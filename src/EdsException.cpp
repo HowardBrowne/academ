@@ -1,7 +1,10 @@
 #include "EdsException.h"
 
 namespace Eds {
-	Exception::Exception(const EdsError& err) throw() : err(err), errString(getErrorString(err)) {
+	Exception::Exception(const EdsError& err, const std::string& function) throw() :
+	err(err),
+	function(function) {
+		errString = getErrorString(err) + " inside " + function + "()";
 	}
 	Exception::~Exception() throw() {
 	}
