@@ -174,11 +174,11 @@ namespace Eds {
 			case EDS_ERR_TAKE_PICTURE_STROBO_CHARGE_NG: return "EDS_ERR_TAKE_PICTURE_STROBO_CHARGE_NG";
 				
 			case EDS_ERR_LAST_GENERIC_ERROR_PLUS_ONE: return "EDS_ERR_LAST_GENERIC_ERROR_PLUS_ONE";
-			default: return "[unrecognized error]";
+			default: return "[unrecognized EdsError]";
 		}
 	}
 	
-	std::string getPropertyString(EdsPropertyID property) {
+	std::string getPropertyIDString(EdsPropertyID property) {
 		switch(property) {
 				/*----------------------------------
 				 Camera Setting Properties
@@ -313,8 +313,51 @@ namespace Eds {
 			case kEdsPropID_Evf_CoordinateSystem: return "kEdsPropID_Evf_CoordinateSystem";
 			case kEdsPropID_Evf_ZoomRect: return "kEdsPropID_Evf_ZoomRect";
 				
-			default: return "[unrecognized property]";
+			default: return "[unrecognized EdsPropertyID]";
 		}
 	}
 	
+	std::string getPropertyEventString(EdsPropertyEvent event) {
+		switch(event) {
+			case kEdsPropertyEvent_All: return "kEdsPropertyEvent_All"; break;
+			case kEdsPropertyEvent_PropertyChanged: return "kEdsPropertyEvent_PropertyChanged"; break;
+			case kEdsPropertyEvent_PropertyDescChanged: return "kEdsPropertyEvent_PropertyDescChanged"; break;
+			default: return "[unrecognized EdsPropertyEvent]";
+		}
+	}
+	
+	std::string getObjectEventString(EdsObjectEvent event) {
+		switch(event) {
+			case kEdsObjectEvent_All: return "kEdsObjectEvent_All"; break;
+			case kEdsObjectEvent_VolumeInfoChanged: return "kEdsObjectEvent_VolumeInfoChanged"; break;
+			case kEdsObjectEvent_VolumeUpdateItems: return "kEdsObjectEvent_VolumeUpdateItems"; break;
+			case kEdsObjectEvent_FolderUpdateItems: return "kEdsObjectEvent_FolderUpdateItems"; break;
+			case kEdsObjectEvent_DirItemCreated: return "kEdsObjectEvent_DirItemCreated"; break;
+			case kEdsObjectEvent_DirItemRemoved: return "kEdsObjectEvent_DirItemRemoved"; break;
+			case kEdsObjectEvent_DirItemInfoChanged: return "kEdsObjectEvent_DirItemInfoChanged"; break;
+			case kEdsObjectEvent_DirItemContentChanged: return "kEdsObjectEvent_DirItemContentChanged"; break;
+			case kEdsObjectEvent_DirItemRequestTransfer: return "kEdsObjectEvent_DirItemRequestTransfer"; break;
+			case kEdsObjectEvent_DirItemRequestTransferDT: return "kEdsObjectEvent_DirItemRequestTransferDT"; break;
+			case kEdsObjectEvent_DirItemCancelTransferDT: return "kEdsObjectEvent_DirItemCancelTransferDT"; break;
+			case kEdsObjectEvent_VolumeAdded: return "kEdsObjectEvent_VolumeAdded"; break;
+			case kEdsObjectEvent_VolumeRemoved: return "kEdsObjectEvent_VolumeRemoved"; break;
+			default: return "[unrecognized EdsObjectEvent]";
+		}
+	}
+	
+	
+	std::string getStateEventString(EdsStateEvent event) {
+		switch(event) {
+			case kEdsStateEvent_All: return "kEdsStateEvent_All"; break;
+			case kEdsStateEvent_Shutdown: return "kEdsStateEvent_Shutdown"; break;
+			case kEdsStateEvent_JobStatusChanged: return "kEdsStateEvent_JobStatusChanged"; break;
+			case kEdsStateEvent_WillSoonShutDown: return "kEdsStateEvent_WillSoonShutDown"; break;
+			case kEdsStateEvent_ShutDownTimerUpdate: return "kEdsStateEvent_ShutDownTimerUpdate"; break;
+			case kEdsStateEvent_CaptureError: return "kEdsStateEvent_CaptureError"; break;
+			case kEdsStateEvent_InternalError: return "kEdsStateEvent_InternalError"; break;
+			case kEdsStateEvent_AfResult: return "kEdsStateEvent_AfResult"; break;
+			case kEdsStateEvent_BulbExposureTime: return "kEdsStateEvent_BulbExposureTime"; break;
+			default: return "[unrecognized EdsStateEvent]";
+		}
+	}
 }
