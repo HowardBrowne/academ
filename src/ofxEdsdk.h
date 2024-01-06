@@ -32,6 +32,7 @@ namespace ofxEdsdk {
 		
 		bool isConnected() const;
 		void setLiveViewReady(bool liveViewReady);
+		void keepAlive();
 		
 	protected:
 	

@@ -2,17 +2,17 @@
 
 namespace ofxEdsdk {
 	
-	/*
-	 After calling startLiveView, we get:
-	 property event: kEdsPropID_Evf_OutputDevice / 0
-	 property event: kEdsPropID_Evf_DepthOfFieldPreview / 0
-	 property event: kEdsPropID_MeteringMode / 0
-	 property event: kEdsPropID_FocusInfo / 0
-	 property event: kEdsPropID_AFMode / 0
-	 property event: kEdsPropID_ExposureCompensation / 0
-	 property event: kEdsPropID_AFMode / 0
-	 property event: kEdsPropID_MeteringMode / 0
-	 */
+	EdsError EDSCALLBACK handleObjectEvent(EdsObjectEvent event, EdsBaseRef object, EdsVoid* context) {
+		cout << "object event " << Eds::getObjectEventString(event) << endl;
+		if(object) {
+			try {
+				Eds::Release(object);
+			} catch (Eds::Exception& e) {
+				cout << "Error while releasing EdsBaseRef* inside handleObjectEvent()" << endl;
+			}
+		}
+	}
+	
 	EdsError EDSCALLBACK handlePropertyEvent(EdsPropertyEvent event, EdsPropertyID propertyId, EdsUInt32 param, EdsVoid* context) {
 		cout << "property event " << Eds::getPropertyEventString(event) << ": " << Eds::getPropertyIDString(propertyId) << " / " << param << endl;
 		
@@ -22,12 +22,22 @@ namespace ofxEdsdk {
 		}
 	}
 	
+	EdsError EDSCALLBACK handleCameraStateEvent(EdsStateEvent event, EdsUInt32 param, EdsVoid* context) {
+		cout << "camera state event " << Eds::getStateEventString(event) << ": " << param << endl;
+		
+		if(event == kEdsStateEvent_WillSoonShutDown) {
+			((Camera*) context)->keepAlive();
+		}
+	}
+	
 	void startLiveview(EdsCameraRef camera) {
 		try {
+			cout << "GetPropertyData" << endl;
 			// Get the output device for the live view image
 			EdsUInt32 device;
 			Eds::GetPropertyData(camera, kEdsPropID_Evf_OutputDevice, 0, sizeof(device), &device);
 			
+			cout << "SetPropertyData" << endl;
 			// PC live view starts by setting the PC as the output device for the live view image.
 			device |= kEdsEvfOutputDevice_PC;
 			Eds::SetPropertyData(camera, kEdsPropID_Evf_OutputDevice, 0, sizeof(device), &device);
@@ -66,7 +76,7 @@ namespace ofxEdsdk {
 			char* streamPointer;
 			Eds::GetPointer(stream, (EdsVoid**) &streamPointer);
 			
-			cout << "Copying image (" << length << ") to ofBuffer" << endl;
+			//cout << "Copying image (" << length << ") to ofBuffer" << endl;
 			ofBuffer imageBuffer;
 			imageBuffer.set(streamPointer, length);
 			
@@ -74,9 +84,11 @@ namespace ofxEdsdk {
 			
 			frameNew = true;
 		} catch (Eds::Exception& e) {
-			stringstream err;
-			err << "There was an error downloading the live view data:" << e.what() << endl;
-			ofLog(OF_LOG_ERROR, err.str());
+			if(e != EDS_ERR_OBJECT_NOTREADY) {
+				stringstream err;
+				err << "There was an error downloading the live view data:" << e.what() << endl;
+				ofLog(OF_LOG_ERROR, err.str());
+			}
 		}
 		
 		try {
@@ -140,7 +152,7 @@ namespace ofxEdsdk {
 	}
 	
 	void Camera::setup() {
-		try {
+		try {			
 			Eds::InitializeSDK();
 			
 			EdsCameraListRef cameraList;
@@ -152,8 +164,23 @@ namespace ofxEdsdk {
 			if(cameraCount > 0) {				
 				EdsInt32 cameraIndex = 0;
 				Eds::GetChildAtIndex(cameraList, cameraIndex, &camera);
+				Eds::SetObjectEventHandler(camera,	kEdsObjectEvent_All, handleObjectEvent, this);
 				Eds::SetPropertyEventHandler(camera,	kEdsPropertyEvent_All, handlePropertyEvent, this);
+				Eds::SetCameraStateEventHandler(camera,	kEdsStateEvent_All, handleCameraStateEvent, this);
+				
+				EdsDeviceInfo info;
+				Eds::GetDeviceInfo(camera, &info);
+				Eds::Release(cameraList);
+				
+				cout << "Camera protocol version: " << info.deviceSubType << endl;
+				cout << "Camera protocol description " << info.szDeviceDescription << endl;
+				cout << "Camera protocol portname " << info.szPortName << endl;
+				cout << "Initialized correctly using camera ID: " << cameraIndex << endl;
+				
+				cout << "OpenSession" << endl;
 				Eds::OpenSession(camera);
+				
+				cout << "startLiveview" << endl;
 				startLiveview(camera);
 				
 				connected = true;
@@ -169,7 +196,7 @@ namespace ofxEdsdk {
 	
 	void Camera::update() {
 		if(liveViewReady) {
-			cout << "downloadEvfData()" << endl;
+			//cout << "downloadEvfData()" << endl;
 			frameNew = downloadEvfData(camera, livePixels);
 			if(frameNew) {
 				if(liveTexture.getWidth() != livePixels.getWidth() ||
@@ -228,5 +255,15 @@ namespace ofxEdsdk {
 	
 	void Camera::setLiveViewReady(bool liveViewReady) {
 		this->liveViewReady = liveViewReady;
+	}
+	
+	void Camera::keepAlive() {
+		if(connected) {
+			try {
+				EdsSendStatusCommand(camera, kEdsCameraCommand_ExtendShutDownTimer, 0);
+			} catch (Eds::Exception& e) {
+				cout << "Error while sending kEdsCameraCommand_ExtendShutDownTimer with EdsSendStatusCommand" << endl;
+			}
+		}
 	}
 }

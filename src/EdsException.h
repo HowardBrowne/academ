@@ -13,9 +13,11 @@
 namespace Eds {
 	class Exception : public std::exception {
 	public:
-		Exception(const EdsError& err, const std::string& function) throw();
+		Exception(EdsError err, const std::string& function) throw();
 		virtual ~Exception() throw();
 		virtual const char* what() const throw();
+		bool operator!=(EdsError err) const;
+		bool operator==(EdsError err) const;
 	private:
 		EdsError err;
 		std::string function;
