@@ -164,9 +164,9 @@ namespace ofxEdsdk {
 			if(cameraCount > 0) {				
 				EdsInt32 cameraIndex = 0;
 				Eds::GetChildAtIndex(cameraList, cameraIndex, &camera);
-				Eds::SetObjectEventHandler(camera,	kEdsObjectEvent_All, handleObjectEvent, this);
-				Eds::SetPropertyEventHandler(camera,	kEdsPropertyEvent_All, handlePropertyEvent, this);
-				Eds::SetCameraStateEventHandler(camera,	kEdsStateEvent_All, handleCameraStateEvent, this);
+				Eds::SetObjectEventHandler(camera, kEdsObjectEvent_All, handleObjectEvent, this);
+				Eds::SetPropertyEventHandler(camera, kEdsPropertyEvent_All, handlePropertyEvent, this);
+				Eds::SetCameraStateEventHandler(camera, kEdsStateEvent_All, handleCameraStateEvent, this);
 				
 				EdsDeviceInfo info;
 				Eds::GetDeviceInfo(camera, &info);

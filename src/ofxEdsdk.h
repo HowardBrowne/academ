@@ -35,8 +35,6 @@ namespace ofxEdsdk {
 		void keepAlive();
 		
 	protected:
-	
-		EdsCameraListRef cameraList;
 		EdsCameraRef camera;
 		
 		ofPixels livePixels;
