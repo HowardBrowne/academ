@@ -14,11 +14,11 @@ namespace ofxEdsdk {
 		update() blocks and isFrameNew() is always true.
 	*/
 	
-	class Camera {
+	class Camera : public ofThread {
 	public:
 		Camera();
 		~Camera();
-		void setup();
+		void setup(int deviceId = 0);
 		void update();
 		bool isFrameNew();
 		
@@ -42,6 +42,8 @@ namespace ofxEdsdk {
 		bool connected;
 		bool liveViewReady;
 		bool frameNew;
+		
+		void threadedFunction();
 	};
 	
 }

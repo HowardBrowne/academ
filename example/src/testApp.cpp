@@ -7,10 +7,12 @@ void testApp::setup() {
 }
 
 void testApp::update() {
-	cout << "update()" << endl;
-	camera.update();
-	if(camera.isFrameNew()) {
-		cout << "new frame" << endl;	
+	if(camera.isConnected()) {
+		cout << "update()" << endl;
+		camera.update();
+		if(camera.isFrameNew()) {
+			cout << "new frame" << endl;	
+		}
 	}
 }
 
