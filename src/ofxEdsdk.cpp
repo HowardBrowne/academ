@@ -46,7 +46,7 @@ namespace ofxEdsdk {
 		}
 	}
 	
-	bool downloadEvfData(EdsCameraRef camera, ofPixels& pixels) {
+	bool downloadEvfData(EdsCameraRef camera, ofBuffer& imageBuffer) {
 		EdsStreamRef stream = NULL;
 		EdsEvfImageRef evfImage = NULL;
 		bool frameNew = false;
@@ -71,17 +71,12 @@ namespace ofxEdsdk {
 			char* streamPointer;
 			Eds::GetPointer(stream, (EdsVoid**) &streamPointer);
 			
-			ofBuffer imageBuffer;
 			imageBuffer.set(streamPointer, length);
-			
-			ofLoadImage(pixels, imageBuffer);
-			
+						
 			frameNew = true;
 		} catch (Eds::Exception& e) {
 			if(e != EDS_ERR_OBJECT_NOTREADY) {
-				stringstream err;
-				err << "There was an error downloading the live view data:" << e.what() << endl;
-				ofLog(OF_LOG_ERROR, err.str());
+				ofLogError() << "There was an error downloading the live view data:" << e.what();
 			}
 		}
 		
@@ -125,22 +120,23 @@ namespace ofxEdsdk {
 	Camera::Camera() :
 	connected(false),
 	liveViewReady(false),
-	frameNew(false) {
+	frameNew(false),
+	needToUpdate(false) {
 	}
 	
 	Camera::~Camera() {
-		if(lock() && connected) {
-			if(liveViewReady) {
-				endLiveview(camera);
-			}
-			
-			try {
-				Eds::CloseSession(camera);
-				Eds::TerminateSDK();
-			} catch (Eds::Exception& e) {
-				stringstream err;
-				err << "There was an error destroying ofxEds::Camera: " << e.what() << endl;
-				ofLog(OF_LOG_ERROR, err.str());
+		waitForThread();
+		if(lock()) {
+			if(connected) {
+				if(liveViewReady) {
+					endLiveview(camera);
+				}
+				try {
+					Eds::CloseSession(camera);
+					Eds::TerminateSDK();
+				} catch (Eds::Exception& e) {
+					ofLogError() << "There was an error destroying ofxEds::Camera: " << e.what();
+				}
 			}
 			unlock();
 		}
@@ -167,7 +163,7 @@ namespace ofxEdsdk {
 				Eds::GetDeviceInfo(camera, &info);
 				Eds::Release(cameraList);
 				
-				startThread();
+				startThread(true, false);
 				
 				connected = true;
 			} else {
@@ -179,14 +175,22 @@ namespace ofxEdsdk {
 	}
 	
 	void Camera::update() {
-		if(liveViewReady) {
-			frameNew = downloadEvfData(camera, livePixels);
-			if(frameNew) {
+		if(lock()) {
+			if(needToUpdate) {
+				// decoding the jpeg in the main thread allows the capture thread to run
+				// in a tighter loop, and avoids an issue where the capture thread would
+				// try decoding when freeimage was already shut down, i think... causing
+				// a bad access error on the freeimage allocated memory.
+				ofLoadImage(livePixels, liveBufferFront);
+				unlock();
 				if(liveTexture.getWidth() != livePixels.getWidth() ||
 					 liveTexture.getHeight() != livePixels.getHeight()) {
 					liveTexture.allocate(livePixels.getWidth(), livePixels.getHeight(), GL_RGB8);
 				}
 				liveTexture.loadData(livePixels);
+				needToUpdate = false;
+			} else {
+				unlock();
 			}
 		}
 	}
@@ -222,13 +226,7 @@ namespace ofxEdsdk {
 	
 	void Camera::draw(float x, float y, float width, float height) {
 		if(liveViewReady) {
-			ofPushMatrix();
-			ofTranslate(x, y);
-			liveTexture.draw(0, 0, width, height);
-			stringstream status;
-			status << livePixels.getWidth() << "x" << livePixels.getHeight() << " @ " << (int) ofGetFrameRate() << " fps";
-			ofDrawBitmapString(status.str(), 10, 20);
-			ofPopMatrix();
+			liveTexture.draw(x, y, width, height);
 		}
 	}
 	
@@ -258,8 +256,20 @@ namespace ofxEdsdk {
 			} catch (Eds::Exception& e) {
 				ofLogError() << "There was an error opening the camera, or starting live view: " << e.what();
 			}
-			
 			unlock();
+		}
+		
+		while(isThreadRunning()) {
+			if(liveViewReady) {
+				bool newData = downloadEvfData(camera, liveBufferBack);
+				needToUpdate |= newData;
+				frameNew |= newData;
+				if(lock()) {
+					// copy back to front, allocates if necessary
+					liveBufferFront.set(liveBufferBack.getBinaryBuffer(), liveBufferBack.size()); //liveBufferFront = liveBufferBack;
+					unlock();
+				}
+			}
 		}
 	}
 }

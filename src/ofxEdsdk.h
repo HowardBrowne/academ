@@ -37,11 +37,12 @@ namespace ofxEdsdk {
 	protected:
 		EdsCameraRef camera;
 		
+		ofBuffer liveBufferBack, liveBufferFront;
 		ofPixels livePixels;
 		ofTexture liveTexture;
 		bool connected;
 		bool liveViewReady;
-		bool frameNew;
+		bool frameNew, needToUpdate;
 		
 		void threadedFunction();
 	};
