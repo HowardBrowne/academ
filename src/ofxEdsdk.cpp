@@ -93,16 +93,14 @@ namespace ofxEdsdk {
 				evfImage = NULL;
 			}
 		} catch (Eds::Exception& e) {
-			stringstream err;
-			err << "There was an error releasing the live view data: " << e.what() << endl;
-			ofLog(OF_LOG_ERROR, err.str());
+			ofLogError() << "There was an error releasing the live view data: " << e.what();
 		}
 		
 		return frameNew;
 	}
 	
 	void endLiveview(EdsCameraRef camera) {
-		try {
+		try {		
 			// Get the output device for the live view image
 			EdsUInt32 device;
 			Eds::GetPropertyData(camera, kEdsPropID_Evf_OutputDevice, 0, sizeof(device), &device);
@@ -111,15 +109,14 @@ namespace ofxEdsdk {
 			device &= ~kEdsEvfOutputDevice_PC;
 			Eds::SetPropertyData(camera, kEdsPropID_Evf_OutputDevice, 0 , sizeof(device), &device);
 		} catch (Eds::Exception& e) {
-			stringstream err;
-			err << "There was an error closing the live view stream: " << e.what() << endl;
-			ofLog(OF_LOG_ERROR, err.str());
+			ofLogError() << "There was an error closing the live view stream: " << e.what();
 		}
 	}
 	
 	Camera::Camera() :
 	connected(false),
 	liveViewReady(false),
+	liveViewDataReady(false),
 	frameNew(false),
 	needToUpdate(false) {
 	}
@@ -164,10 +161,8 @@ namespace ofxEdsdk {
 				Eds::Release(cameraList);
 				
 				startThread(true, false);
-				
-				connected = true;
 			} else {
-				ofLog(OF_LOG_ERROR, "No cameras are connected for ofxEds::Camera::setup().");
+				ofLogError() << "No cameras are connected for ofxEds::Camera::setup().";
 			}
 		} catch (Eds::Exception& e) {
 			ofLogError() << "There was an error during Camera::setup(): " << e.what();
@@ -181,14 +176,19 @@ namespace ofxEdsdk {
 				// in a tighter loop, and avoids an issue where the capture thread would
 				// try decoding when freeimage was already shut down, i think... causing
 				// a bad access error on the freeimage allocated memory.
-				ofLoadImage(livePixels, liveBufferFront);
+				liveBufferFront.set(liveBufferMiddle.getBinaryBuffer(), liveBufferMiddle.size());
 				unlock();
+				ofLoadImage(livePixels, liveBufferFront);
 				if(liveTexture.getWidth() != livePixels.getWidth() ||
 					 liveTexture.getHeight() != livePixels.getHeight()) {
 					liveTexture.allocate(livePixels.getWidth(), livePixels.getHeight(), GL_RGB8);
 				}
 				liveTexture.loadData(livePixels);
-				needToUpdate = false;
+				if(lock()) {
+					needToUpdate = false;
+					liveViewDataReady = true;
+					unlock();
+				}
 			} else {
 				unlock();
 			}
@@ -196,12 +196,25 @@ namespace ofxEdsdk {
 	}
 	
 	bool Camera::isFrameNew() {
-		if(frameNew) {
-			frameNew = false;
-			return true;
-		} else {
-			return false;
+		if(lock()) {
+			if(frameNew) {
+				frameNew = false;
+				unlock();
+				return true;
+			} else {
+				unlock();
+				return false;
+			}
 		}
+	}
+	
+	float Camera::getFrameRate() {
+		float frameRate;
+		if(lock()) {
+			frameRate = fps.getFrameRate();
+			unlock();
+		}
+		return frameRate;
 	}
 	
 	const ofPixels& Camera::getPixelsRef() const {
@@ -225,16 +238,17 @@ namespace ofxEdsdk {
 	}
 	
 	void Camera::draw(float x, float y, float width, float height) {
-		if(liveViewReady) {
+		if(liveViewDataReady) {
 			liveTexture.draw(x, y, width, height);
 		}
 	}
 	
-	bool Camera::isConnected() const {
-		return connected;
+	bool Camera::isReady() const {
+		return liveViewDataReady;
 	}
 	
 	void Camera::setLiveViewReady(bool liveViewReady) {
+		// this is done before the threaded loop starts
 		this->liveViewReady = liveViewReady;
 	}
 	
@@ -252,6 +266,7 @@ namespace ofxEdsdk {
 		if(lock()) {
 			try {
 				Eds::OpenSession(camera);
+				connected = true;
 				startLiveview(camera);
 			} catch (Eds::Exception& e) {
 				ofLogError() << "There was an error opening the camera, or starting live view: " << e.what();
@@ -259,15 +274,20 @@ namespace ofxEdsdk {
 			unlock();
 		}
 		
+		// relevant variables:
+		// liveViewReady, needToUpdate, frameNew, liveBufferMiddle, liveBufferBack, fps
 		while(isThreadRunning()) {
 			if(liveViewReady) {
 				bool newData = downloadEvfData(camera, liveBufferBack);
-				needToUpdate |= newData;
-				frameNew |= newData;
-				if(lock()) {
-					// copy back to front, allocates if necessary
-					liveBufferFront.set(liveBufferBack.getBinaryBuffer(), liveBufferBack.size()); //liveBufferFront = liveBufferBack;
-					unlock();
+				if(newData) {
+					needToUpdate = true;
+					frameNew = true;
+					if(lock()) {
+						// copy back to middle, allocates if necessary
+						liveBufferMiddle.set(liveBufferBack.getBinaryBuffer(), liveBufferBack.size()); // liveBufferMiddle = liveBufferBack;
+						fps.tick();
+						unlock();
+					}
 				}
 			}
 		}

@@ -6,6 +6,7 @@
 
 #include "ofMain.h"
 #include "EdsWrapper.h"
+#include "RateTimer.h"
 
 namespace ofxEdsdk {
 	
@@ -21,6 +22,7 @@ namespace ofxEdsdk {
 		void setup(int deviceId = 0);
 		void update();
 		bool isFrameNew();
+		float getFrameRate();
 		
 		unsigned int getWidth() const;
 		unsigned int getHeight() const;
@@ -30,19 +32,33 @@ namespace ofxEdsdk {
 		const ofPixels& getPixelsRef() const;
 		ofPixels& getPixelsRef();
 		
-		bool isConnected() const;
+		bool isReady() const;
+		
 		void setLiveViewReady(bool liveViewReady);
 		void keepAlive();
 		
 	protected:
 		EdsCameraRef camera;
 		
-		ofBuffer liveBufferBack, liveBufferFront;
+		RateTimer fps;
+		
+		ofBuffer liveBufferBack, liveBufferMiddle, liveBufferFront;
 		ofPixels livePixels;
 		ofTexture liveTexture;
+		
+		// There are a few important state variables used for keeping track of what
+		// is and isn't ready, and syncing data in different threads.
+		
+		// camera is valid, OpenSession was successful, you can use Eds(camera) now.
 		bool connected;
+		// Live view is initialized and connected, ready for downloading.
 		bool liveViewReady;
-		bool frameNew, needToUpdate;
+		// Live view data has been downloaded at least once by threadedFunction().
+		bool liveViewDataReady;
+		// There has been a new frame since the user last checked isFrameNew().
+		bool frameNew;
+		// There is new live view data available for uploading in update().
+		bool needToUpdate;
 		
 		void threadedFunction();
 	};
