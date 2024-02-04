@@ -72,7 +72,7 @@ namespace ofxEdsdk {
 			Eds::GetPointer(stream, (EdsVoid**) &streamPointer);
 			
 			imageBuffer.set(streamPointer, length);
-						
+			
 			frameNew = true;
 		} catch (Eds::Exception& e) {
 			if(e != EDS_ERR_OBJECT_NOTREADY) {
@@ -123,20 +123,19 @@ namespace ofxEdsdk {
 	
 	Camera::~Camera() {
 		waitForThread();
-		if(lock()) {
-			if(connected) {
-				if(liveViewReady) {
-					endLiveview(camera);
-				}
-				try {
-					Eds::CloseSession(camera);
-					Eds::TerminateSDK();
-				} catch (Eds::Exception& e) {
-					ofLogError() << "There was an error destroying ofxEds::Camera: " << e.what();
-				}
+		lock();
+		if(connected) {
+			if(liveViewReady) {
+				endLiveview(camera);
 			}
-			unlock();
+			try {
+				Eds::CloseSession(camera);
+				Eds::TerminateSDK();
+			} catch (Eds::Exception& e) {
+				ofLogError() << "There was an error destroying ofxEds::Camera: " << e.what();
+			}
 		}
+		unlock();
 	}
 	
 	void Camera::setup(int deviceId) {
@@ -170,41 +169,33 @@ namespace ofxEdsdk {
 	}
 	
 	void Camera::update() {
-		if(lock()) {
-			if(needToUpdate) {
-				// decoding the jpeg in the main thread allows the capture thread to run
-				// in a tighter loop, and avoids an issue where the capture thread would
-				// try decoding when freeimage was already shut down, i think... causing
-				// a bad access error on the freeimage allocated memory.
-				liveBufferFront.set(liveBufferMiddle.getBinaryBuffer(), liveBufferMiddle.size());
-				unlock();
-				ofLoadImage(livePixels, liveBufferFront);
-				if(liveTexture.getWidth() != livePixels.getWidth() ||
-					 liveTexture.getHeight() != livePixels.getHeight()) {
-					liveTexture.allocate(livePixels.getWidth(), livePixels.getHeight(), GL_RGB8);
-				}
-				liveTexture.loadData(livePixels);
-				if(lock()) {
-					needToUpdate = false;
-					liveViewDataReady = true;
-					unlock();
-				}
-			} else {
-				unlock();
+		lock();
+		if(needToUpdate) {
+			// decoding the jpeg in the main thread allows the capture thread to run in a tighter loop.
+			liveBufferFront.set(liveBufferMiddle.getBinaryBuffer(), liveBufferMiddle.size());
+			unlock();
+			ofLoadImage(livePixels, liveBufferFront);
+			frameNew = true;
+			if(liveTexture.getWidth() != livePixels.getWidth() ||
+				 liveTexture.getHeight() != livePixels.getHeight()) {
+				liveTexture.allocate(livePixels.getWidth(), livePixels.getHeight(), GL_RGB8);
 			}
+			liveTexture.loadData(livePixels);
+			lock();
+			needToUpdate = false;
+			liveViewDataReady = true;
+			unlock();
+		} else {
+			unlock();
 		}
 	}
 	
 	bool Camera::isFrameNew() {
-		if(lock()) {
-			if(frameNew) {
-				frameNew = false;
-				unlock();
-				return true;
-			} else {
-				unlock();
-				return false;
-			}
+		if(frameNew) {
+			frameNew = false;
+			return true;
+		} else {
+			return false;
 		}
 	}
 	
@@ -274,20 +265,16 @@ namespace ofxEdsdk {
 			unlock();
 		}
 		
-		// relevant variables:
-		// liveViewReady, needToUpdate, frameNew, liveBufferMiddle, liveBufferBack, fps
+		// threaded variables:
+		// liveViewReady, needToUpdate, liveBufferMiddle, liveBufferBack, fps
 		while(isThreadRunning()) {
 			if(liveViewReady) {
-				bool newData = downloadEvfData(camera, liveBufferBack);
-				if(newData) {
+				if(downloadEvfData(camera, liveBufferBack)) {
+					lock();
 					needToUpdate = true;
-					frameNew = true;
-					if(lock()) {
-						// copy back to middle, allocates if necessary
-						liveBufferMiddle.set(liveBufferBack.getBinaryBuffer(), liveBufferBack.size()); // liveBufferMiddle = liveBufferBack;
-						fps.tick();
-						unlock();
-					}
+					liveBufferMiddle.set(liveBufferBack.getBinaryBuffer(), liveBufferBack.size()); // liveBufferMiddle = liveBufferBack;
+					fps.tick();
+					unlock();
 				}
 			}
 		}

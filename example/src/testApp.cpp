@@ -1,9 +1,9 @@
 #include "testApp.h"
 
-ofxEdsdk::RateTimer camFps;
+ofxEdsdk::RateTimer appFps, decodeFps;
 
 void testApp::setup() {
-	ofSetVerticalSync(true);
+	//ofSetVerticalSync(true);
 	ofSetLogLevel(OF_LOG_VERBOSE);
 	camera.setup();
 }
@@ -11,8 +11,9 @@ void testApp::setup() {
 void testApp::update() {
 	camera.update();
 	if(camera.isFrameNew()) {
-		camFps.tick();
+		decodeFps.tick();
 	}
+	appFps.tick();
 }
 
 void testApp::draw() {
@@ -20,9 +21,9 @@ void testApp::draw() {
 	if(camera.isReady()) {
 		stringstream status;
 		status << camera.getWidth() << "x" << camera.getHeight() << " @ " <<
-			(int) ofGetFrameRate() << " app-fps " << " / " <<
-			(int) camFps.getFrameRate() << " app-cam-fps" << " / " <<
-			(int) camera.getFrameRate() << " cam-cam-fps";
+			(int) appFps.getFrameRate() << " app-fps " << " / " <<
+			(int) decodeFps.getFrameRate() << " decode-fps" << " / " <<
+			(int) camera.getFrameRate() << " cam-fps";
 		ofDrawBitmapString(status.str(), 10, 20);
 	}
 }
