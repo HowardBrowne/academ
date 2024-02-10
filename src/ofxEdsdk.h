@@ -9,12 +9,7 @@
 #include "RateTimer.h"
 
 namespace ofxEdsdk {
-	
-	/*
-		Camera is currently not threaded, so
-		update() blocks and isFrameNew() is always true.
-	*/
-	
+
 	class Camera : public ofThread {
 	public:
 		Camera();
@@ -48,17 +43,11 @@ namespace ofxEdsdk {
 		
 		// There are a few important state variables used for keeping track of what
 		// is and isn't ready, and syncing data in different threads.
-		
-		// camera is valid, OpenSession was successful, you can use Eds(camera) now.
-		bool connected;
-		// Live view is initialized and connected, ready for downloading.
-		bool liveViewReady;
-		// Live view data has been downloaded at least once by threadedFunction().
-		bool liveViewDataReady;
-		// There has been a new frame since the user last checked isFrameNew().
-		bool frameNew;
-		// There is new live view data available for uploading in update().
-		bool needToUpdate;
+		bool connected; // camera is valid, OpenSession was successful, you can use Eds(camera) now.
+		bool liveViewReady; // Live view is initialized and connected, ready for downloading.
+		bool liveViewDataReady; // Live view data has been downloaded at least once by threadedFunction().
+		bool frameNew; // There has been a new frame since the user last checked isFrameNew().
+		bool needToUpdate; // There is new live view data available for uploading in update().
 		
 		void threadedFunction();
 	};
