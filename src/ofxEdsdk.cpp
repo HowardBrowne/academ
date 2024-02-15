@@ -2,7 +2,7 @@
 
 namespace ofxEdsdk {
 	
-	EdsError EDSCALLBACK handleObjectEvent(EdsObjectEvent event, EdsBaseRef object, EdsVoid* context) {
+	EdsError EDSCALLBACK Camera::handleObjectEvent(EdsObjectEvent event, EdsBaseRef object, EdsVoid* context) {
 		ofLogVerbose() << "object event " << Eds::getObjectEventString(event);
 		if(object) {
 			try {
@@ -13,7 +13,7 @@ namespace ofxEdsdk {
 		}
 	}
 	
-	EdsError EDSCALLBACK handlePropertyEvent(EdsPropertyEvent event, EdsPropertyID propertyId, EdsUInt32 param, EdsVoid* context) {
+	EdsError EDSCALLBACK Camera::handlePropertyEvent(EdsPropertyEvent event, EdsPropertyID propertyId, EdsUInt32 param, EdsVoid* context) {
 		ofLogVerbose() << "property event " << Eds::getPropertyEventString(event) << ": " << Eds::getPropertyIDString(propertyId) << " / " << param;
 		
 		if(propertyId == kEdsPropID_Evf_OutputDevice) {
@@ -21,11 +21,11 @@ namespace ofxEdsdk {
 		}
 	}
 	
-	EdsError EDSCALLBACK handleCameraStateEvent(EdsStateEvent event, EdsUInt32 param, EdsVoid* context) {
+	EdsError EDSCALLBACK Camera::handleCameraStateEvent(EdsStateEvent event, EdsUInt32 param, EdsVoid* context) {
 		ofLogVerbose() << "camera state event " << Eds::getStateEventString(event) << ": " << param;
 		
 		if(event == kEdsStateEvent_WillSoonShutDown) {
-			((Camera*) context)->keepAlive();
+			((Camera*) context)->sendKeepAlive();
 		}
 	}
 	
@@ -118,7 +118,8 @@ namespace ofxEdsdk {
 	liveViewReady(false),
 	liveViewDataReady(false),
 	frameNew(false),
-	needToUpdate(false) {
+	needToUpdate(false),
+	needToTakePicture(false) {
 	}
 	
 	Camera::~Camera() {
@@ -208,6 +209,12 @@ namespace ofxEdsdk {
 		return frameRate;
 	}
 	
+	void Camera::takePicture() {
+		lock();
+		needToTakePicture = true;
+		unlock();
+	}
+	
 	const ofPixels& Camera::getPixelsRef() const {
 		return livePixels;
 	}
@@ -243,12 +250,12 @@ namespace ofxEdsdk {
 		this->liveViewReady = liveViewReady;
 	}
 	
-	void Camera::keepAlive() {
+	void Camera::sendKeepAlive() {
 		if(connected) {
 			try {
-				EdsSendStatusCommand(camera, kEdsCameraCommand_ExtendShutDownTimer, 0);
+				Eds::SendStatusCommand(camera, kEdsCameraCommand_ExtendShutDownTimer, 0);
 			} catch (Eds::Exception& e) {
-				ofLogError() << "Error while sending kEdsCameraCommand_ExtendShutDownTimer with EdsSendStatusCommand: " << e.what();
+				ofLogError() << "Error while sending kEdsCameraCommand_ExtendShutDownTimer with Eds::SendStatusCommand: " << e.what();
 			}
 		}
 	}
@@ -268,12 +275,28 @@ namespace ofxEdsdk {
 		// threaded variables:
 		// liveViewReady, needToUpdate, liveBufferMiddle, liveBufferBack, fps
 		while(isThreadRunning()) {
+		
 			if(liveViewReady) {
 				if(downloadEvfData(camera, liveBufferBack)) {
 					lock();
 					needToUpdate = true;
 					liveBufferMiddle.set(liveBufferBack.getBinaryBuffer(), liveBufferBack.size()); // liveBufferMiddle = liveBufferBack;
 					fps.tick();
+					unlock();
+				}
+				
+				lock();
+				if(needToTakePicture) {
+					unlock();
+					try {
+						Eds::SendCommand(camera, kEdsCameraCommand_TakePicture, 0);
+						lock();
+						needToTakePicture = false;
+						unlock();
+					} catch (Eds::Exception& e) {
+						ofLogError() << "Error while taking a picture: " << e.what();
+					}
+				} else {
 					unlock();
 				}
 			}

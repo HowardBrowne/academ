@@ -27,3 +27,9 @@ void testApp::draw() {
 		ofDrawBitmapString(status.str(), 10, 20);
 	}
 }
+
+void testApp::keyPressed(int key) {
+	if(key == ' ') {
+		camera.takePicture();
+	}
+}

@@ -1,15 +1,15 @@
 #pragma once
 
 /*
-	ofxEdsdk lets OF talk to Canon cameras using a simple interface.
-*/
+ ofxEdsdk lets OF talk to Canon cameras using a simple interface.
+ */
 
 #include "ofMain.h"
 #include "EdsWrapper.h"
 #include "RateTimer.h"
 
 namespace ofxEdsdk {
-
+	
 	class Camera : public ofThread {
 	public:
 		Camera();
@@ -18,6 +18,8 @@ namespace ofxEdsdk {
 		void update();
 		bool isFrameNew();
 		float getFrameRate();
+		
+		void takePicture();
 		
 		unsigned int getWidth() const;
 		unsigned int getHeight() const;
@@ -28,9 +30,6 @@ namespace ofxEdsdk {
 		ofPixels& getPixelsRef();
 		
 		bool isReady() const;
-		
-		void setLiveViewReady(bool liveViewReady);
-		void keepAlive();
 		
 	protected:
 		EdsCameraRef camera;
@@ -48,8 +47,16 @@ namespace ofxEdsdk {
 		bool liveViewDataReady; // Live view data has been downloaded at least once by threadedFunction().
 		bool frameNew; // There has been a new frame since the user last checked isFrameNew().
 		bool needToUpdate; // There is new live view data available for uploading in update().
+		bool needToTakePicture; // threadedFunction() should take a picture next chance it gets.
 		
 		void threadedFunction();
+		
+		static EdsError EDSCALLBACK handleObjectEvent(EdsObjectEvent event, EdsBaseRef object, EdsVoid* context);
+		static EdsError EDSCALLBACK handlePropertyEvent(EdsPropertyEvent event, EdsPropertyID propertyId, EdsUInt32 param, EdsVoid* context);
+		static EdsError EDSCALLBACK handleCameraStateEvent(EdsStateEvent event, EdsUInt32 param, EdsVoid* context);
+		
+		void setLiveViewReady(bool liveViewReady);
+		void sendKeepAlive();
 	};
 	
 }
