@@ -5,11 +5,6 @@
 
 #include "EdsWrapper.h"
 
-/*
-	even more useful would be to go through the different error codes and make a class for each,
-	or at least for subsets. this would take a little longer.
-*/
-
 namespace Eds {
 	class Exception : public std::exception {
 	public:

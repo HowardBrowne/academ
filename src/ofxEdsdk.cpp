@@ -2,33 +2,29 @@
 
 namespace ofxEdsdk {
 	
-	EdsError EDSCALLBACK Camera::handleObjectEvent(EdsObjectEvent event, EdsBaseRef object, EdsVoid* context) {
-		ofLogVerbose() << "object event " << Eds::getObjectEventString(event);
-		if(object) {
-			try {
-				Eds::Release(object);
-			} catch (Eds::Exception& e) {
-				ofLogError() << "Error while releasing EdsBaseRef* inside handleObjectEvent()";
-			}
-		}
-	}
-	
-	EdsError EDSCALLBACK Camera::handlePropertyEvent(EdsPropertyEvent event, EdsPropertyID propertyId, EdsUInt32 param, EdsVoid* context) {
-		ofLogVerbose() << "property event " << Eds::getPropertyEventString(event) << ": " << Eds::getPropertyIDString(propertyId) << " / " << param;
+	// from EDSDK API sample 6.3.6
+	void downloadImage(EdsDirectoryItemRef directoryItem) {
+		EdsStreamRef stream = NULL;
 		
-		if(propertyId == kEdsPropID_Evf_OutputDevice) {
-			((Camera*) context)->setLiveViewReady(true);
+		// Get directory item information
+		EdsDirectoryItemInfo dirItemInfo;
+		try {
+			Eds::GetDirectoryItemInfo(directoryItem, &dirItemInfo);
+			Eds::CreateFileStream(dirItemInfo.szFileName, kEdsFileCreateDisposition_CreateAlways, kEdsAccess_ReadWrite, &stream);
+			Eds::Download(directoryItem, dirItemInfo.size, stream);
+			Eds::DownloadComplete(directoryItem);
+			Eds::Release(stream);
+		} catch (Eds::Exception& e) {
+			ofLogError() << "There was an error downloading the image: " << e.what();
 		}
 	}
 	
-	EdsError EDSCALLBACK Camera::handleCameraStateEvent(EdsStateEvent event, EdsUInt32 param, EdsVoid* context) {
-		ofLogVerbose() << "camera state event " << Eds::getStateEventString(event) << ": " << param;
+	// from EDSDK API sample 6.3.7
+	void getVolume(EdsCameraRef camera, EdsVolumeRef* volume) {
 		
-		if(event == kEdsStateEvent_WillSoonShutDown) {
-			((Camera*) context)->sendKeepAlive();
-		}
 	}
 	
+	// from EDSDK API sample 6.3.10
 	void startLiveview(EdsCameraRef camera) {
 		try {
 			// Get the output device for the live view image
@@ -46,6 +42,7 @@ namespace ofxEdsdk {
 		}
 	}
 	
+	// from EDSDK API sample 6.3.10
 	bool downloadEvfData(EdsCameraRef camera, ofBuffer& imageBuffer) {
 		EdsStreamRef stream = NULL;
 		EdsEvfImageRef evfImage = NULL;
@@ -99,6 +96,7 @@ namespace ofxEdsdk {
 		return frameNew;
 	}
 	
+	// from EDSDK API sample 6.3.10
 	void endLiveview(EdsCameraRef camera) {
 		try {		
 			// Get the output device for the live view image
@@ -111,6 +109,34 @@ namespace ofxEdsdk {
 		} catch (Eds::Exception& e) {
 			ofLogError() << "There was an error closing the live view stream: " << e.what();
 		}
+	}
+	
+	EdsError EDSCALLBACK Camera::handleObjectEvent(EdsObjectEvent event, EdsBaseRef object, EdsVoid* context) {
+		ofLogVerbose() << "object event " << Eds::getObjectEventString(event);
+		if(object) {
+			try {
+				Eds::Release(object);
+			} catch (Eds::Exception& e) {
+				ofLogError() << "Error while releasing EdsBaseRef* inside handleObjectEvent()";
+			}
+		}
+		return EDS_ERR_OK;
+	}
+	
+	EdsError EDSCALLBACK Camera::handlePropertyEvent(EdsPropertyEvent event, EdsPropertyID propertyId, EdsUInt32 param, EdsVoid* context) {
+		ofLogVerbose() << "property event " << Eds::getPropertyEventString(event) << ": " << Eds::getPropertyIDString(propertyId) << " / " << param;
+		if(propertyId == kEdsPropID_Evf_OutputDevice) {
+			((Camera*) context)->setLiveViewReady(true);
+		}
+		return EDS_ERR_OK;
+	}
+	
+	EdsError EDSCALLBACK Camera::handleCameraStateEvent(EdsStateEvent event, EdsUInt32 param, EdsVoid* context) {
+		ofLogVerbose() << "camera state event " << Eds::getStateEventString(event) << ": " << param;
+		if(event == kEdsStateEvent_WillSoonShutDown) {
+			((Camera*) context)->sendKeepAlive();
+		}
+		return EDS_ERR_OK;
 	}
 	
 	Camera::Camera() :
