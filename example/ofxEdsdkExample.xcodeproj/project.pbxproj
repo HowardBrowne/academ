@@ -13,6 +13,7 @@
 		27C3C33313EBD91A002FA441 /* EdsException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27C3C32D13EBD91A002FA441 /* EdsException.cpp */; };
 		27C3C33413EBD91A002FA441 /* EdsStrings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27C3C32F13EBD91A002FA441 /* EdsStrings.cpp */; };
 		27C3C33513EBD91A002FA441 /* EdsWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27C3C33113EBD91A002FA441 /* EdsWrapper.cpp */; };
+		27C3C3BD13EBE53D002FA441 /* EdsExamples.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27C3C3BC13EBE53D002FA441 /* EdsExamples.cpp */; };
 		BBAB23CB13894F3D00AA2426 /* GLUT.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BBAB23BE13894E4700AA2426 /* GLUT.framework */; };
 		E4328149138ABC9F0047C5CB /* openFrameworks.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4328148138ABC890047C5CB /* openFrameworks.a */; };
 		E45BE97B0E8CC7DD009D7055 /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9710E8CC7DD009D7055 /* AGL.framework */; };
@@ -81,6 +82,8 @@
 		27C3C33013EBD91A002FA441 /* EdsStrings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EdsStrings.h; path = ../src/EdsWrapper/EdsStrings.h; sourceTree = SOURCE_ROOT; };
 		27C3C33113EBD91A002FA441 /* EdsWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EdsWrapper.cpp; path = ../src/EdsWrapper/EdsWrapper.cpp; sourceTree = SOURCE_ROOT; };
 		27C3C33213EBD91A002FA441 /* EdsWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EdsWrapper.h; path = ../src/EdsWrapper/EdsWrapper.h; sourceTree = SOURCE_ROOT; };
+		27C3C39F13EBE473002FA441 /* EdsExamples.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EdsExamples.h; sourceTree = "<group>"; };
+		27C3C3BC13EBE53D002FA441 /* EdsExamples.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EdsExamples.cpp; path = ../src/EdsWrapper/EdsExamples.cpp; sourceTree = SOURCE_ROOT; };
 		BBAB23BE13894E4700AA2426 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = ../../../libs/glut/lib/osx/GLUT.framework; sourceTree = "<group>"; };
 		E4328143138ABC890047C5CB /* openFrameworksLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = openFrameworksLib.xcodeproj; path = ../../../libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj; sourceTree = SOURCE_ROOT; };
 		E45BE9710E8CC7DD009D7055 /* AGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AGL.framework; path = /System/Library/Frameworks/AGL.framework; sourceTree = "<absolute>"; };
@@ -206,6 +209,8 @@
 				27C3C33013EBD91A002FA441 /* EdsStrings.h */,
 				27C3C33113EBD91A002FA441 /* EdsWrapper.cpp */,
 				27C3C33213EBD91A002FA441 /* EdsWrapper.h */,
+				27C3C39F13EBE473002FA441 /* EdsExamples.h */,
+				27C3C3BC13EBE53D002FA441 /* EdsExamples.cpp */,
 			);
 			name = EdsWrapper;
 			path = ../src/EdsWrapper;
@@ -384,6 +389,7 @@
 				27C3C33313EBD91A002FA441 /* EdsException.cpp in Sources */,
 				27C3C33413EBD91A002FA441 /* EdsStrings.cpp in Sources */,
 				27C3C33513EBD91A002FA441 /* EdsWrapper.cpp in Sources */,
+				27C3C3BD13EBE53D002FA441 /* EdsExamples.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

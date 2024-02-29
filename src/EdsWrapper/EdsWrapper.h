@@ -11,6 +11,7 @@
 
 #include "EdsStrings.h"
 #include "EdsException.h"
+#include "EdsExamples.h"
 
 #include "ofxEdsdk.h"
 

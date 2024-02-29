@@ -1,116 +1,7 @@
 #include "ofxEdsdk.h"
 
 namespace ofxEdsdk {
-	
-	// from EDSDK API sample 6.3.6
-	void downloadImage(EdsDirectoryItemRef directoryItem) {
-		EdsStreamRef stream = NULL;
 		
-		// Get directory item information
-		EdsDirectoryItemInfo dirItemInfo;
-		try {
-			Eds::GetDirectoryItemInfo(directoryItem, &dirItemInfo);
-			Eds::CreateFileStream(dirItemInfo.szFileName, kEdsFileCreateDisposition_CreateAlways, kEdsAccess_ReadWrite, &stream);
-			Eds::Download(directoryItem, dirItemInfo.size, stream);
-			Eds::DownloadComplete(directoryItem);
-			Eds::Release(stream);
-		} catch (Eds::Exception& e) {
-			ofLogError() << "There was an error downloading the image: " << e.what();
-		}
-	}
-	
-	// from EDSDK API sample 6.3.7
-	void getVolume(EdsCameraRef camera, EdsVolumeRef* volume) {
-		
-	}
-	
-	// from EDSDK API sample 6.3.10
-	void startLiveview(EdsCameraRef camera) {
-		try {
-			// Get the output device for the live view image
-			EdsUInt32 device;
-			Eds::GetPropertyData(camera, kEdsPropID_Evf_OutputDevice, 0, sizeof(device), &device);
-			
-			// PC live view starts by setting the PC as the output device for the live view image.
-			device |= kEdsEvfOutputDevice_PC;
-			Eds::SetPropertyData(camera, kEdsPropID_Evf_OutputDevice, 0, sizeof(device), &device);
-			
-			// A property change event notification is issued from the camera if property settings are made successfully.
-			// Start downloading of the live view image once the property change notification arrives.
-		} catch (Eds::Exception& e) {
-			ofLogError() << "There was an error starting live view: " << e.what();
-		}
-	}
-	
-	// from EDSDK API sample 6.3.10
-	bool downloadEvfData(EdsCameraRef camera, ofBuffer& imageBuffer) {
-		EdsStreamRef stream = NULL;
-		EdsEvfImageRef evfImage = NULL;
-		bool frameNew = false;
-		
-		try {
-			//	Create memory stream.
-			// This automatically allocates the stream if it's unallocated.
-			// If you want to save some time, avoid reallocation by keeping the EdsStreamRef around.
-			// Alternatively, you can prepare the memory yourself and use EdsCreateMemoryStreamFromPointer.
-			Eds::CreateMemoryStream(0, &stream);
-			
-			//	Create EvfImageRef.
-			Eds::CreateEvfImageRef(stream, &evfImage);
-			
-			// Download live view image data.
-			Eds::DownloadEvfImage(camera, evfImage);
-			
-			// Get the image data.
-			EdsUInt32 length;
-			Eds::GetLength(stream, &length);
-			
-			char* streamPointer;
-			Eds::GetPointer(stream, (EdsVoid**) &streamPointer);
-			
-			imageBuffer.set(streamPointer, length);
-			
-			frameNew = true;
-		} catch (Eds::Exception& e) {
-			if(e != EDS_ERR_OBJECT_NOTREADY) {
-				ofLogError() << "There was an error downloading the live view data:" << e.what();
-			}
-		}
-		
-		try {
-			// Release stream
-			if(stream != NULL) {
-				Eds::Release(stream);
-				stream = NULL;
-			}
-			
-			// Release evfImage
-			if(evfImage != NULL) {
-				Eds::Release(evfImage);
-				evfImage = NULL;
-			}
-		} catch (Eds::Exception& e) {
-			ofLogError() << "There was an error releasing the live view data: " << e.what();
-		}
-		
-		return frameNew;
-	}
-	
-	// from EDSDK API sample 6.3.10
-	void endLiveview(EdsCameraRef camera) {
-		try {		
-			// Get the output device for the live view image
-			EdsUInt32 device;
-			Eds::GetPropertyData(camera, kEdsPropID_Evf_OutputDevice, 0, sizeof(device), &device);
-			
-			// PC live view ends if the PC is disconnected from the live view image output device.
-			device &= ~kEdsEvfOutputDevice_PC;
-			Eds::SetPropertyData(camera, kEdsPropID_Evf_OutputDevice, 0 , sizeof(device), &device);
-		} catch (Eds::Exception& e) {
-			ofLogError() << "There was an error closing the live view stream: " << e.what();
-		}
-	}
-	
 	EdsError EDSCALLBACK Camera::handleObjectEvent(EdsObjectEvent event, EdsBaseRef object, EdsVoid* context) {
 		ofLogVerbose() << "object event " << Eds::getObjectEventString(event);
 		if(object) {
@@ -153,7 +44,7 @@ namespace ofxEdsdk {
 		lock();
 		if(connected) {
 			if(liveViewReady) {
-				endLiveview(camera);
+				Eds::EndLiveview(camera);
 			}
 			try {
 				Eds::CloseSession(camera);
@@ -291,7 +182,7 @@ namespace ofxEdsdk {
 			try {
 				Eds::OpenSession(camera);
 				connected = true;
-				startLiveview(camera);
+				Eds::StartLiveview(camera);
 			} catch (Eds::Exception& e) {
 				ofLogError() << "There was an error opening the camera, or starting live view: " << e.what();
 			}
@@ -301,9 +192,9 @@ namespace ofxEdsdk {
 		// threaded variables:
 		// liveViewReady, needToUpdate, liveBufferMiddle, liveBufferBack, fps
 		while(isThreadRunning()) {
-		
+			
 			if(liveViewReady) {
-				if(downloadEvfData(camera, liveBufferBack)) {
+				if(Eds::DownloadEvfData(camera, liveBufferBack)) {
 					lock();
 					needToUpdate = true;
 					liveBufferMiddle.set(liveBufferBack.getBinaryBuffer(), liveBufferBack.size()); // liveBufferMiddle = liveBufferBack;

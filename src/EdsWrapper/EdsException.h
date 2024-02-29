@@ -1,9 +1,8 @@
 #pragma once
 
-#include <typeinfo>
-#include <string>
-
 #include "EdsWrapper.h"
+#include <string>
+#include <typeinfo>
 
 namespace Eds {
 	class Exception : public std::exception {
