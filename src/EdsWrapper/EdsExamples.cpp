@@ -1,5 +1,7 @@
 #include "EdsExamples.h"
 
+#include "ofLog.h"
+
 namespace Eds {
 
 	// from EDSDK API sample 6.3.7

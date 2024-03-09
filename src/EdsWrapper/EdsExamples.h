@@ -1,7 +1,7 @@
 #pragma once
 
 #include "EdsWrapper.h"
-#include "ofMain.h"
+#include "ofFileUtils.h"
 
 /*
 	This collection of functions is based on examples given in the appendix of the
