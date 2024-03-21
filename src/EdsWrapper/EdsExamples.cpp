@@ -39,14 +39,18 @@ namespace Eds {
 	}
 	
 	// from EDSDK API sample 6.3.6
-	void DownloadImage(EdsDirectoryItemRef directoryItem) {
+	void DownloadImage(EdsDirectoryItemRef directoryItem, ofBuffer& imageBuffer, bool deleteAfterDownload) {
 		try {
 			EdsStreamRef stream = NULL;
 			EdsDirectoryItemInfo dirItemInfo;
 			Eds::GetDirectoryItemInfo(directoryItem, &dirItemInfo);
-			Eds::CreateFileStream(dirItemInfo.szFileName, kEdsFileCreateDisposition_CreateAlways, kEdsAccess_ReadWrite, &stream);
+			Eds::CreateMemoryStream(0, &stream);
 			Eds::Download(directoryItem, dirItemInfo.size, stream);
 			Eds::DownloadComplete(directoryItem);
+			Eds::CopyStream(stream, imageBuffer);
+			if(deleteAfterDownload) {
+				Eds::DeleteDirectoryItem(directoryItem);
+			}
 			Eds::Release(stream);
 		} catch (Eds::Exception& e) {
 			ofLogError() << "There was an error downloading the image: " << e.what();
@@ -91,13 +95,7 @@ namespace Eds {
 			Eds::DownloadEvfImage(camera, evfImage);
 			
 			// Get the image data.
-			EdsUInt32 length;
-			Eds::GetLength(stream, &length);
-			
-			char* streamPointer;
-			Eds::GetPointer(stream, (EdsVoid**) &streamPointer);
-			
-			imageBuffer.set(streamPointer, length);
+			Eds::CopyStream(stream, imageBuffer);
 			
 			frameNew = true;
 		} catch (Eds::Exception& e) {
@@ -140,4 +138,12 @@ namespace Eds {
 		}
 	}
 
+
+	void CopyStream(EdsStreamRef stream, ofBuffer& buffer) {
+			EdsUInt32 length;
+			Eds::GetLength(stream, &length);
+			char* streamPointer;
+			Eds::GetPointer(stream, (EdsVoid**) &streamPointer);
+			buffer.set(streamPointer, length);
+		}
 }

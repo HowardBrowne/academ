@@ -40,6 +40,10 @@ namespace ofxEdsdk {
 		ofPixels livePixels;
 		ofTexture liveTexture;
 		
+		ofBuffer imageBuffer;
+		ofPixels imagePixels;
+		ofTexture imageTexture;
+		
 		// There are a few important state variables used for keeping track of what
 		// is and isn't ready, and syncing data in different threads.
 		bool connected; // camera is valid, OpenSession was successful, you can use Eds(camera) now.
@@ -57,6 +61,7 @@ namespace ofxEdsdk {
 		
 		void setLiveViewReady(bool liveViewReady);
 		void sendKeepAlive();
+		void downloadImage(EdsDirectoryItemRef directoryItem);
 	};
 	
 }

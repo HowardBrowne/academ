@@ -5,10 +5,14 @@ namespace ofxEdsdk {
 	EdsError EDSCALLBACK Camera::handleObjectEvent(EdsObjectEvent event, EdsBaseRef object, EdsVoid* context) {
 		ofLogVerbose() << "object event " << Eds::getObjectEventString(event);
 		if(object) {
-			try {
-				Eds::Release(object);
-			} catch (Eds::Exception& e) {
-				ofLogError() << "Error while releasing EdsBaseRef* inside handleObjectEvent()";
+			if(event == kEdsObjectEvent_DirItemCreated) {
+				((Camera*) context)->downloadImage(object);
+			} else {
+				try {
+					Eds::Release(object);
+				} catch (Eds::Exception& e) {
+					ofLogError() << "Error while releasing EdsBaseRef inside handleObjectEvent()";
+				}
 			}
 		}
 		return EDS_ERR_OK;
@@ -155,6 +159,12 @@ namespace ofxEdsdk {
 	void Camera::draw(float x, float y, float width, float height) {
 		if(liveViewDataReady) {
 			liveTexture.draw(x, y, width, height);
+			ofPushMatrix();
+			ofScale(.1, .1);
+			if(imageTexture.getWidth() > 0) {
+				imageTexture.draw(0, 0);
+			}
+			ofPopMatrix();
 		}
 	}
 	
@@ -175,6 +185,21 @@ namespace ofxEdsdk {
 				ofLogError() << "Error while sending kEdsCameraCommand_ExtendShutDownTimer with Eds::SendStatusCommand: " << e.what();
 			}
 		}
+	}
+	
+	void Camera::downloadImage(EdsDirectoryItemRef directoryItem) {
+		Eds::DownloadImage(directoryItem, imageBuffer);
+		ofLogVerbose() << "Downloaded image: " << (int) (imageBuffer.size() / 1024) << " KB" << endl;
+		
+		//ofBufferToFile("out.jpg", imageBuffer, true);
+		
+		ofLoadImage(imagePixels, imageBuffer);
+		
+		if(imageTexture.getWidth() != imagePixels.getWidth() ||
+			 imageTexture.getHeight() != imagePixels.getHeight()) {
+			imageTexture.allocate(imagePixels.getWidth(), imagePixels.getHeight(), GL_RGB8);
+		}
+		imageTexture.loadData(imagePixels);
 	}
 	
 	void Camera::threadedFunction() {
