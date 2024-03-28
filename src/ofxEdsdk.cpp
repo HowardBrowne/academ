@@ -161,8 +161,8 @@ namespace ofxEdsdk {
 			liveTexture.draw(x, y, width, height);
 			ofPushMatrix();
 			ofScale(.1, .1);
-			if(imageTexture.getWidth() > 0) {
-				imageTexture.draw(0, 0);
+			if(photoTexture.getWidth() > 0) {
+				photoTexture.draw(0, 0);
 			}
 			ofPopMatrix();
 		}
@@ -188,18 +188,18 @@ namespace ofxEdsdk {
 	}
 	
 	void Camera::downloadImage(EdsDirectoryItemRef directoryItem) {
-		Eds::DownloadImage(directoryItem, imageBuffer);
-		ofLogVerbose() << "Downloaded image: " << (int) (imageBuffer.size() / 1024) << " KB" << endl;
+		Eds::DownloadImage(directoryItem, photoBuffer);
+		ofLogVerbose() << "Downloaded image: " << (int) (photoBuffer.size() / 1024) << " KB" << endl;
 		
-		//ofBufferToFile("out.jpg", imageBuffer, true);
+		//ofBufferToFile("out.jpg", photoBuffer, true);
 		
-		ofLoadImage(imagePixels, imageBuffer);
+		ofLoadImage(photoPixels, photoBuffer);
 		
-		if(imageTexture.getWidth() != imagePixels.getWidth() ||
-			 imageTexture.getHeight() != imagePixels.getHeight()) {
-			imageTexture.allocate(imagePixels.getWidth(), imagePixels.getHeight(), GL_RGB8);
+		if(photoTexture.getWidth() != photoPixels.getWidth() ||
+			 photoTexture.getHeight() != photoPixels.getHeight()) {
+			photoTexture.allocate(photoPixels.getWidth(), photoPixels.getHeight(), GL_RGB8);
 		}
-		imageTexture.loadData(imagePixels);
+		photoTexture.loadData(photoPixels);
 	}
 	
 	void Camera::threadedFunction() {

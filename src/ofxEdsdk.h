@@ -40,9 +40,9 @@ namespace ofxEdsdk {
 		ofPixels livePixels;
 		ofTexture liveTexture;
 		
-		ofBuffer imageBuffer;
-		ofPixels imagePixels;
-		ofTexture imageTexture;
+		ofBuffer photoBuffer;
+		ofPixels photoPixels;
+		ofTexture photoTexture;
 		
 		// There are a few important state variables used for keeping track of what
 		// is and isn't ready, and syncing data in different threads.
