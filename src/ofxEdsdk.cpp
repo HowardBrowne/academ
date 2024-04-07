@@ -1,15 +1,18 @@
 #include "ofxEdsdk.h"
 
 namespace ofxEdsdk {
-		
+	
 	EdsError EDSCALLBACK Camera::handleObjectEvent(EdsObjectEvent event, EdsBaseRef object, EdsVoid* context) {
 		ofLogVerbose() << "object event " << Eds::getObjectEventString(event);
 		if(object) {
 			if(event == kEdsObjectEvent_DirItemCreated) {
 				((Camera*) context)->downloadImage(object);
+			} else if(event == kEdsObjectEvent_DirItemRemoved) {
+				// no need to release a removed item
+
 			} else {
 				try {
-					Eds::Release(object);
+					Eds::SafeRelease(object);
 				} catch (Eds::Exception& e) {
 					ofLogError() << "Error while releasing EdsBaseRef inside handleObjectEvent()";
 				}
@@ -21,7 +24,7 @@ namespace ofxEdsdk {
 	EdsError EDSCALLBACK Camera::handlePropertyEvent(EdsPropertyEvent event, EdsPropertyID propertyId, EdsUInt32 param, EdsVoid* context) {
 		ofLogVerbose() << "property event " << Eds::getPropertyEventString(event) << ": " << Eds::getPropertyIDString(propertyId) << " / " << param;
 		if(propertyId == kEdsPropID_Evf_OutputDevice) {
-			((Camera*) context)->setLiveViewReady(true);
+			((Camera*) context)->setLiveReady(true);
 		}
 		return EDS_ERR_OK;
 	}
@@ -36,18 +39,22 @@ namespace ofxEdsdk {
 	
 	Camera::Camera() :
 	connected(false),
-	liveViewReady(false),
-	liveViewDataReady(false),
+	liveReady(false),
+	liveDataReady(false),
 	frameNew(false),
 	needToUpdate(false),
-	needToTakePicture(false) {
+	needToTakePhoto(false),
+	photoNew(false),
+	needToDecodePhoto(false),
+	needToUpdatePhoto(false),
+	photoDataReady(false) {
 	}
 	
 	Camera::~Camera() {
 		waitForThread();
 		lock();
 		if(connected) {
-			if(liveViewReady) {
+			if(liveReady) {
 				Eds::EndLiveview(camera);
 			}
 			try {
@@ -79,7 +86,7 @@ namespace ofxEdsdk {
 				
 				EdsDeviceInfo info;
 				Eds::GetDeviceInfo(camera, &info);
-				Eds::Release(cameraList);
+				Eds::SafeRelease(cameraList);
 				
 				startThread(true, false);
 			} else {
@@ -105,7 +112,7 @@ namespace ofxEdsdk {
 			liveTexture.loadData(livePixels);
 			lock();
 			needToUpdate = false;
-			liveViewDataReady = true;
+			liveDataReady = true;
 			unlock();
 		} else {
 			unlock();
@@ -121,6 +128,15 @@ namespace ofxEdsdk {
 		}
 	}
 	
+	bool Camera::isPhotoNew() {
+		if(photoNew) {
+			photoNew = false;
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 	float Camera::getFrameRate() {
 		float frameRate;
 		if(lock()) {
@@ -130,18 +146,22 @@ namespace ofxEdsdk {
 		return frameRate;
 	}
 	
-	void Camera::takePicture() {
+	void Camera::takePhoto() {
 		lock();
-		needToTakePicture = true;
+		needToTakePhoto = true;
 		unlock();
 	}
 	
-	const ofPixels& Camera::getPixelsRef() const {
+	ofPixels& Camera::getLivePixels() {
 		return livePixels;
 	}
 	
-	ofPixels& Camera::getPixelsRef() {
-		return livePixels;
+	ofPixels& Camera::getPhotoPixels() {
+		if(needToDecodePhoto) {
+			ofLoadImage(photoPixels, photoBuffer);
+			needToDecodePhoto = false;
+		}
+		return photoPixels;
 	}
 	
 	unsigned int Camera::getWidth() const {
@@ -157,24 +177,40 @@ namespace ofxEdsdk {
 	}
 	
 	void Camera::draw(float x, float y, float width, float height) {
-		if(liveViewDataReady) {
+		if(liveDataReady) {
 			liveTexture.draw(x, y, width, height);
-			ofPushMatrix();
-			ofScale(.1, .1);
-			if(photoTexture.getWidth() > 0) {
-				photoTexture.draw(0, 0);
-			}
-			ofPopMatrix();
 		}
 	}
 	
-	bool Camera::isReady() const {
-		return liveViewDataReady;
+	void Camera::drawPhoto(float x, float y) {
+		if(photoDataReady) {
+			ofPixels& photoPixels = getPhotoPixels();
+			draw(x, y, getWidth(), getHeight());
+		}
 	}
 	
-	void Camera::setLiveViewReady(bool liveViewReady) {
+	void Camera::drawPhoto(float x, float y, float width, float height) {
+		if(photoDataReady) {
+			ofPixels& photoPixels = getPhotoPixels();
+			if(needToUpdatePhoto) {
+				if(photoTexture.getWidth() != photoPixels.getWidth() ||
+					 photoTexture.getHeight() != photoPixels.getHeight()) {
+					photoTexture.allocate(photoPixels.getWidth(), photoPixels.getHeight(), GL_RGB8);
+				}
+				photoTexture.loadData(photoPixels);
+				needToUpdatePhoto = false;
+			}
+			photoTexture.draw(x, y, width, height);
+		}
+	}
+	
+	bool Camera::isLiveReady() const {
+		return liveDataReady;
+	}
+	
+	void Camera::setLiveReady(bool liveReady) {
 		// this is done before the threaded loop starts
-		this->liveViewReady = liveViewReady;
+		this->liveReady = liveReady;
 	}
 	
 	void Camera::sendKeepAlive() {
@@ -189,17 +225,16 @@ namespace ofxEdsdk {
 	
 	void Camera::downloadImage(EdsDirectoryItemRef directoryItem) {
 		Eds::DownloadImage(directoryItem, photoBuffer);
-		ofLogVerbose() << "Downloaded image: " << (int) (photoBuffer.size() / 1024) << " KB" << endl;
-		
-		//ofBufferToFile("out.jpg", photoBuffer, true);
-		
-		ofLoadImage(photoPixels, photoBuffer);
-		
-		if(photoTexture.getWidth() != photoPixels.getWidth() ||
-			 photoTexture.getHeight() != photoPixels.getHeight()) {
-			photoTexture.allocate(photoPixels.getWidth(), photoPixels.getHeight(), GL_RGB8);
-		}
-		photoTexture.loadData(photoPixels);
+		ofLogVerbose() << "Downloaded image: " << (int) (photoBuffer.size() / 1024) << " KB";
+		photoDataReady = true;
+		photoNew = true;
+		needToDecodePhoto = true;
+		needToUpdatePhoto = true;
+	}
+	
+	void Camera::savePhoto(string filename) {
+		ofLogVerbose() << "status of needToDecodePhoto: " << needToDecodePhoto << endl;
+		ofBufferToFile(filename, photoBuffer, true);
 	}
 	
 	void Camera::threadedFunction() {
@@ -215,10 +250,9 @@ namespace ofxEdsdk {
 		}
 		
 		// threaded variables:
-		// liveViewReady, needToUpdate, liveBufferMiddle, liveBufferBack, fps
+		// liveReady, needToUpdate, liveBufferMiddle, liveBufferBack, fps, needToTakePhoto
 		while(isThreadRunning()) {
-			
-			if(liveViewReady) {
+			if(liveReady) {
 				if(Eds::DownloadEvfData(camera, liveBufferBack)) {
 					lock();
 					needToUpdate = true;
@@ -228,12 +262,12 @@ namespace ofxEdsdk {
 				}
 				
 				lock();
-				if(needToTakePicture) {
+				if(needToTakePhoto) {
 					unlock();
 					try {
 						Eds::SendCommand(camera, kEdsCameraCommand_TakePicture, 0);
 						lock();
-						needToTakePicture = false;
+						needToTakePhoto = false;
 						unlock();
 					} catch (Eds::Exception& e) {
 						ofLogError() << "Error while taking a picture: " << e.what();

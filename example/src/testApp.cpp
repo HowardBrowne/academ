@@ -13,12 +13,17 @@ void testApp::update() {
 	if(camera.isFrameNew()) {
 		decodeFps.tick();
 	}
+	if(camera.isPhotoNew()) {
+		camera.savePhoto(ofToString(ofGetFrameNum()) + ".jpg");
+	}
 	appFps.tick();
 }
 
 void testApp::draw() {
 	camera.draw(0, 0);
-	if(camera.isReady()) {
+	//camera.drawPhoto(0, 0, 432, 288);
+	
+	if(camera.isLiveReady()) {
 		stringstream status;
 		status << camera.getWidth() << "x" << camera.getHeight() << " @ " <<
 			(int) appFps.getFrameRate() << " app-fps " << " / " <<
@@ -30,6 +35,6 @@ void testApp::draw() {
 
 void testApp::keyPressed(int key) {
 	if(key == ' ') {
-		camera.takePicture();
+		camera.takePhoto();
 	}
 }

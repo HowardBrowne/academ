@@ -18,4 +18,5 @@ namespace Eds {
 	bool DownloadEvfData(EdsCameraRef camera, ofBuffer& imageBuffer);
 	void EndLiveview(EdsCameraRef camera);
 	void CopyStream(EdsStreamRef stream, ofBuffer& buffer);
+	void SafeRelease(EdsBaseRef& inRef);
 }

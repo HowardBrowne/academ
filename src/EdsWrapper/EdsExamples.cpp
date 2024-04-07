@@ -3,7 +3,7 @@
 #include "ofLog.h"
 
 namespace Eds {
-
+	
 	// from EDSDK API sample 6.3.7
 	void GetVolume(EdsCameraRef camera, EdsVolumeRef volume) {
 		try {
@@ -29,9 +29,7 @@ namespace Eds {
 					directoryItem = dirItem;
 					break;
 				}
-				if(dirItem) {
-					Eds::Release(dirItem);
-				}
+				Eds::SafeRelease(dirItem);
 			}
 		} catch (Eds::Exception& e) {
 			ofLogError() << "There was an error getting the DCIM folder: " << e.what();
@@ -51,7 +49,7 @@ namespace Eds {
 			if(deleteAfterDownload) {
 				Eds::DeleteDirectoryItem(directoryItem);
 			}
-			Eds::Release(stream);
+			Eds::SafeRelease(stream);
 		} catch (Eds::Exception& e) {
 			ofLogError() << "There was an error downloading the image: " << e.what();
 		}
@@ -82,21 +80,10 @@ namespace Eds {
 		bool frameNew = false;
 		
 		try {
-			//	Create memory stream.
-			// This automatically allocates the stream if it's unallocated.
-			// If you want to save some time, avoid reallocation by keeping the EdsStreamRef around.
-			// Alternatively, you can prepare the memory yourself and use EdsCreateMemoryStreamFromPointer.
 			Eds::CreateMemoryStream(0, &stream);
-			
-			//	Create EvfImageRef.
 			Eds::CreateEvfImageRef(stream, &evfImage);
-			
-			// Download live view image data.
 			Eds::DownloadEvfImage(camera, evfImage);
-			
-			// Get the image data.
 			Eds::CopyStream(stream, imageBuffer);
-			
 			frameNew = true;
 		} catch (Eds::Exception& e) {
 			if(e != EDS_ERR_OBJECT_NOTREADY) {
@@ -105,17 +92,8 @@ namespace Eds {
 		}
 		
 		try {
-			// Release stream
-			if(stream != NULL) {
-				Eds::Release(stream);
-				stream = NULL;
-			}
-			
-			// Release evfImage
-			if(evfImage != NULL) {
-				Eds::Release(evfImage);
-				evfImage = NULL;
-			}
+			Eds::SafeRelease(stream);
+			Eds::SafeRelease(evfImage);
 		} catch (Eds::Exception& e) {
 			ofLogError() << "There was an error releasing the live view data: " << e.what();
 		}
@@ -137,13 +115,20 @@ namespace Eds {
 			ofLogError() << "There was an error closing the live view stream: " << e.what();
 		}
 	}
-
-
+	
+	
 	void CopyStream(EdsStreamRef stream, ofBuffer& buffer) {
-			EdsUInt32 length;
-			Eds::GetLength(stream, &length);
-			char* streamPointer;
-			Eds::GetPointer(stream, (EdsVoid**) &streamPointer);
-			buffer.set(streamPointer, length);
+		EdsUInt32 length;
+		Eds::GetLength(stream, &length);
+		char* streamPointer;
+		Eds::GetPointer(stream, (EdsVoid**) &streamPointer);
+		buffer.set(streamPointer, length);
+	}
+	
+	void SafeRelease(EdsBaseRef& inRef) {
+		if(inRef != NULL) {
+			Eds::Release(inRef);
+			inRef = NULL;
 		}
+	}
 }
