@@ -84,6 +84,7 @@
 		27C3C33213EBD91A002FA441 /* EdsWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EdsWrapper.h; path = ../src/EdsWrapper/EdsWrapper.h; sourceTree = SOURCE_ROOT; };
 		27C3C39F13EBE473002FA441 /* EdsExamples.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EdsExamples.h; sourceTree = "<group>"; };
 		27C3C3BC13EBE53D002FA441 /* EdsExamples.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EdsExamples.cpp; path = ../src/EdsWrapper/EdsExamples.cpp; sourceTree = SOURCE_ROOT; };
+		27C3C55C13EC19B7002FA441 /* FixedQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FixedQueue.h; sourceTree = "<group>"; };
 		BBAB23BE13894E4700AA2426 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = ../../../libs/glut/lib/osx/GLUT.framework; sourceTree = "<group>"; };
 		E4328143138ABC890047C5CB /* openFrameworksLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = openFrameworksLib.xcodeproj; path = ../../../libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj; sourceTree = SOURCE_ROOT; };
 		E45BE9710E8CC7DD009D7055 /* AGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AGL.framework; path = /System/Library/Frameworks/AGL.framework; sourceTree = "<absolute>"; };
@@ -195,6 +196,7 @@
 				27926A4313EA7BE3003F6797 /* ofxEdsdk.cpp */,
 				27926A4413EA7BE3003F6797 /* ofxEdsdk.h */,
 				27C3C1E913EB98FD002FA441 /* RateTimer.h */,
+				27C3C55C13EC19B7002FA441 /* FixedQueue.h */,
 			);
 			name = src;
 			path = ../../../addons/ofxEdsdk/src;

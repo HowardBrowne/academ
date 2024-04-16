@@ -2,10 +2,10 @@
 
 ofxEdsdk::RateTimer appFps, decodeFps;
 
-void testApp::setup() {
-	//ofSetVerticalSync(true);
+void testApp::setup() {	
+	ofSetVerticalSync(true);
 	ofSetLogLevel(OF_LOG_VERBOSE);
-	camera.setup();
+	//camera.setup();
 }
 
 void testApp::update() {
@@ -25,7 +25,7 @@ void testApp::draw() {
 	
 	if(camera.isLiveReady()) {
 		stringstream status;
-		status << camera.getWidth() << "x" << camera.getHeight() << " @ " <<
+			status << camera.getWidth() << "x" << camera.getHeight() << " @ " <<
 			(int) appFps.getFrameRate() << " app-fps " << " / " <<
 			(int) decodeFps.getFrameRate() << " decode-fps" << " / " <<
 			(int) camera.getFrameRate() << " cam-fps";

@@ -7,6 +7,7 @@
 #include "ofMain.h"
 #include "EdsWrapper.h"
 #include "RateTimer.h"
+#include "FixedQueue.h"
 
 namespace ofxEdsdk {
 	
