@@ -6,8 +6,7 @@
 /*
 	This collection of functions is mostly based on examples in the appendix of the
 	EDSDK API documentation. The Eds::Exception style is used instead of EdsError,
-	and error reporting is done using OF logging. All functions use camel-case in
-	accordance with the normal Eds functions.
+	and error reporting is done using OF logging.
 */
 
 namespace Eds {
