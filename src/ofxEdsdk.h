@@ -15,7 +15,7 @@ namespace ofxEdsdk {
 	public:
 		Camera();
 		~Camera();
-		void setup(int deviceId = 0);
+		bool setup(int deviceId = 0);
 		
 		void update();
 		bool isFrameNew();
@@ -31,7 +31,7 @@ namespace ofxEdsdk {
 		bool isPhotoNew();
 		void drawPhoto(float x, float y);
 		void drawPhoto(float x, float y, float width, float height);
-		void savePhoto(string filename);
+		void savePhoto(string filename); // .jpg only
 		ofPixels& getPhotoPixels();
 		
 	protected:
@@ -39,21 +39,38 @@ namespace ofxEdsdk {
 		
 		RateTimer fps;
 		
-		ofBuffer liveBufferBack, liveBufferMiddle, liveBufferFront;
+		/*
+		 Live view data is read from the camera into liveBufferBack when DownloadEvfData()
+		 is called. Then the class is locked, and liveBufferBack is quickly pushed
+		 onto the liveBufferMiddle queue. When update() is called, the class is
+		 also locked to quickly pop from liveBufferMiddle into liveBufferFront.
+		 At this point, the pixels are decoded into livePixels and uploaded to liveTexture.
+		 */
+		ofBuffer liveBufferBack, liveBufferFront;
+		FixedQueue<ofBuffer*> liveBufferMiddle;
 		ofPixels livePixels;
 		ofTexture liveTexture;
 		
+		/*
+		 Photo data is read from the camera into photoBuffer when downloadImage() is
+		 called after being triggered by takePhoto(). photoBuffer is only decoded
+		 into photoPixels when getPhotoPixels() is called. drawPhoto() will call
+		 getPhotoPixels(), and also upload photoPixels to photoTexture. savePhoto()
+		 does not decode photoBuffer.
+		 */
 		ofBuffer photoBuffer;
 		ofPixels photoPixels;
 		ofTexture photoTexture;
 		
-		// There are a few important state variables used for keeping track of what
-		// is and isn't ready, and syncing data between different threads.
+		/*
+		 There are a few important state variables used for keeping track of what
+		 is and isn't ready, and syncing data between the main thread and the
+		 capture thread.
+		 */
 		bool connected; // camera is valid, OpenSession was successful, you can use Eds(camera) now.
 		bool liveReady; // Live view is initialized and connected, ready for downloading.
 		bool liveDataReady; // Live view data has been downloaded at least once by threadedFunction().
 		bool frameNew; // There has been a new frame since the user last checked isFrameNew().
-		bool needToUpdate; // There is new live view data available for uploading in update().
 		bool needToTakePhoto; // threadedFunction() should take a picture next chance it gets.
 		bool photoNew; // There is a new photo since the user last checked isPhotoNew().
 		bool needToDecodePhoto; // The photo pixels needs to be decoded from photo buffer.

@@ -1,5 +1,15 @@
 #include "ofxEdsdk.h"
 
+/*
+ This controls the size of liveBufferMiddle. If you are running at a low fps
+ (lower than 30 fps), then it will effectively correspond to the latency of the
+ camera. If you're running higher than 30 fps, it will determine how many frames
+ you can miss without dropping one. For example, if you are running at 60 fps
+ but one frame happens to last 200 ms, and your buffer size is 4, you will drop
+ 2 frames.
+ */
+#define OFX_EDSDK_BUFFER_SIZE 4
+
 namespace ofxEdsdk {
 	
 	EdsError EDSCALLBACK Camera::handleObjectEvent(EdsObjectEvent event, EdsBaseRef object, EdsVoid* context) {
@@ -9,7 +19,6 @@ namespace ofxEdsdk {
 				((Camera*) context)->downloadImage(object);
 			} else if(event == kEdsObjectEvent_DirItemRemoved) {
 				// no need to release a removed item
-
 			} else {
 				try {
 					Eds::SafeRelease(object);
@@ -42,12 +51,15 @@ namespace ofxEdsdk {
 	liveReady(false),
 	liveDataReady(false),
 	frameNew(false),
-	needToUpdate(false),
 	needToTakePhoto(false),
 	photoNew(false),
 	needToDecodePhoto(false),
 	needToUpdatePhoto(false),
 	photoDataReady(false) {
+		liveBufferMiddle.resize(OFX_EDSDK_BUFFER_SIZE);
+		for(int i = 0; i < liveBufferMiddle.maxSize(); i++) {
+			liveBufferMiddle[i] = new ofBuffer();
+		}
 	}
 	
 	Camera::~Camera() {
@@ -65,9 +77,12 @@ namespace ofxEdsdk {
 			}
 		}
 		unlock();
+		for(int i = 0; i < liveBufferMiddle.maxSize(); i++) {
+			delete liveBufferMiddle[i];
+		}
 	}
 	
-	void Camera::setup(int deviceId) {
+	bool Camera::setup(int deviceId) {
 		try {
 			Eds::InitializeSDK();
 			
@@ -89,19 +104,24 @@ namespace ofxEdsdk {
 				Eds::SafeRelease(cameraList);
 				
 				startThread(true, false);
+				return true;
 			} else {
 				ofLogError() << "No cameras are connected for ofxEds::Camera::setup().";
 			}
 		} catch (Eds::Exception& e) {
 			ofLogError() << "There was an error during Camera::setup(): " << e.what();
 		}
+		return false;
 	}
 	
 	void Camera::update() {
 		lock();
-		if(needToUpdate) {
+		cout << "size:" << liveBufferMiddle.size() << endl;
+		if(liveBufferMiddle.size() > 0) {
 			// decoding the jpeg in the main thread allows the capture thread to run in a tighter loop.
-			liveBufferFront.set(liveBufferMiddle.getBinaryBuffer(), liveBufferMiddle.size());
+			ofBuffer* middleFront = liveBufferMiddle.front();
+			liveBufferFront.set(middleFront->getBinaryBuffer(), middleFront->size());
+			liveBufferMiddle.pop();
 			unlock();
 			ofLoadImage(livePixels, liveBufferFront);
 			frameNew = true;
@@ -111,7 +131,6 @@ namespace ofxEdsdk {
 			}
 			liveTexture.loadData(livePixels);
 			lock();
-			needToUpdate = false;
 			liveDataReady = true;
 			unlock();
 		} else {
@@ -250,31 +269,32 @@ namespace ofxEdsdk {
 		}
 		
 		// threaded variables:
-		// liveReady, needToUpdate, liveBufferMiddle, liveBufferBack, fps, needToTakePhoto
+		// liveReady, liveBufferMiddle, liveBufferBack, fps, needToTakePhoto
 		while(isThreadRunning()) {
 			if(liveReady) {
 				if(Eds::DownloadEvfData(camera, liveBufferBack)) {
 					lock();
-					needToUpdate = true;
-					liveBufferMiddle.set(liveBufferBack.getBinaryBuffer(), liveBufferBack.size()); // liveBufferMiddle = liveBufferBack;
+					ofBuffer* middleBack = liveBufferMiddle.back();
+					middleBack->set(liveBufferBack.getBinaryBuffer(), liveBufferBack.size()); // liveBufferMiddle = liveBufferBack;
+					liveBufferMiddle.push();
 					fps.tick();
 					unlock();
 				}
-				
-				lock();
-				if(needToTakePhoto) {
+			}
+			
+			lock();
+			if(needToTakePhoto) {
+				unlock();
+				try {
+					Eds::SendCommand(camera, kEdsCameraCommand_TakePicture, 0);
+					lock();
+					needToTakePhoto = false;
 					unlock();
-					try {
-						Eds::SendCommand(camera, kEdsCameraCommand_TakePicture, 0);
-						lock();
-						needToTakePhoto = false;
-						unlock();
-					} catch (Eds::Exception& e) {
-						ofLogError() << "Error while taking a picture: " << e.what();
-					}
-				} else {
-					unlock();
+				} catch (Eds::Exception& e) {
+					ofLogError() << "Error while taking a picture: " << e.what();
 				}
+			} else {
+				unlock();
 			}
 		}
 	}

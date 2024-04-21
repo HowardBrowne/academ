@@ -21,31 +21,37 @@ namespace ofxEdsdk {
 		void resize(int size) {
 			buffer.resize(size);
 		}
-		T& operator[](unsigned int i) {
-			return buffer[i % maxSize()];
-		}
-		void push_back(T cur) {
-			(*this)[writePosition] = cur;
-			moveWrite();
-			difference++;
-			if(difference > maxSize()) {
-				difference--;
-				moveRead();
-			}
-		}
-		T pop_front() {
-			T cur = (*this)[readPosition];
-			if(difference > 0) {
-				moveRead();
-				difference--;
-			}
-			return cur;
-		}
 		unsigned int size() const {
 			return difference;
 		}
 		unsigned int maxSize() const {
 			return buffer.size();
+		}
+		T& operator[](unsigned int i) {
+			return buffer[i];
+		}
+		T& front() {
+			return buffer[readPosition];
+		}
+		T& back() {
+			return buffer[writePosition];
+		}
+		void push() {
+			moveWrite();
+			difference++;
+			// if we've pushed one too many elements to the back,
+			// we need to drop to drop one from the front
+			if(difference > maxSize()) {
+				difference--;
+				moveRead();
+			}
+		}
+		void pop() {
+			// only pop if there are elements to pop
+			if(difference > 0) {
+				moveRead();
+				difference--;
+			}
 		}
 	};
 }

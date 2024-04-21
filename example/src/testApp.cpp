@@ -1,33 +1,32 @@
 #include "testApp.h"
 
-ofxEdsdk::RateTimer appFps, decodeFps;
-
-void testApp::setup() {	
+void testApp::setup() {
 	ofSetVerticalSync(true);
+	ofSetFrameRate(30);
 	ofSetLogLevel(OF_LOG_VERBOSE);
-	//camera.setup();
+	camera.setup();
 }
 
 void testApp::update() {
 	camera.update();
 	if(camera.isFrameNew()) {
-		decodeFps.tick();
+		// process the live view with camera.getLivePixels()
 	}
 	if(camera.isPhotoNew()) {
+		// process the photo with camera.getPhotoPixels()
+		// or just save the photo to disk (jpg only):
 		camera.savePhoto(ofToString(ofGetFrameNum()) + ".jpg");
 	}
-	appFps.tick();
 }
 
 void testApp::draw() {
 	camera.draw(0, 0);
-	//camera.drawPhoto(0, 0, 432, 288);
+	// camera.drawPhoto(0, 0, 432, 288);
 	
 	if(camera.isLiveReady()) {
 		stringstream status;
 			status << camera.getWidth() << "x" << camera.getHeight() << " @ " <<
-			(int) appFps.getFrameRate() << " app-fps " << " / " <<
-			(int) decodeFps.getFrameRate() << " decode-fps" << " / " <<
+			(int) ofGetFrameRate() << " app-fps " << " / " <<
 			(int) camera.getFrameRate() << " cam-fps";
 		ofDrawBitmapString(status.str(), 10, 20);
 	}
