@@ -116,7 +116,6 @@ namespace ofxEdsdk {
 	
 	void Camera::update() {
 		lock();
-		cout << "size:" << liveBufferMiddle.size() << endl;
 		if(liveBufferMiddle.size() > 0) {
 			// decoding the jpeg in the main thread allows the capture thread to run in a tighter loop.
 			ofBuffer* middleFront = liveBufferMiddle.front();
@@ -165,10 +164,15 @@ namespace ofxEdsdk {
 		return frameRate;
 	}
 	
-	void Camera::takePhoto() {
+	void Camera::takePhoto(bool blocking) {
 		lock();
 		needToTakePhoto = true;
 		unlock();
+		if(blocking) {
+			while(!photoNew) {
+				ofSleepMillis(10);
+			}
+		}
 	}
 	
 	ofPixels& Camera::getLivePixels() {

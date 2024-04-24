@@ -27,7 +27,7 @@ namespace ofxEdsdk {
 		ofPixels& getLivePixels();
 		float getFrameRate();
 		
-		void takePhoto();
+		void takePhoto(bool blocking = false);
 		bool isPhotoNew();
 		void drawPhoto(float x, float y);
 		void drawPhoto(float x, float y, float width, float height);

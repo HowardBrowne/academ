@@ -1,8 +1,6 @@
 #include "testApp.h"
 
 void testApp::setup() {
-	ofSetVerticalSync(true);
-	ofSetFrameRate(30);
 	ofSetLogLevel(OF_LOG_VERBOSE);
 	camera.setup();
 }
