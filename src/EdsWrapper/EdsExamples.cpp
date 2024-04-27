@@ -3,56 +3,20 @@
 #include "ofLog.h"
 
 namespace Eds {
-	
-	// from EDSDK API sample 6.3.7
-	void GetVolume(EdsCameraRef camera, EdsVolumeRef volume) {
-		try {
-			EdsUInt32 count = 0;
-			Eds::GetChildCount(camera, &count);
-			Eds::GetChildAtIndex(camera, 0, &volume);
-		} catch (Eds::Exception& e) {
-			ofLogError() << "There was an error getting the file object: " << e.what();
-		}
-	}
-	
-	// from EDSDK API sample 6.3.8
-	void GetDCIMFolder(EdsVolumeRef volume, EdsDirectoryItemRef directoryItem) {
-		try {
-			EdsDirectoryItemRef dirItem = NULL;
-			EdsDirectoryItemInfo dirItemInfo;
-			EdsUInt32 count = 0;
-			Eds::GetChildCount(volume, &count);
-			for(int i = 0; i < count; i++) {
-				Eds::GetChildAtIndex(volume, i, &dirItem);
-				Eds::GetDirectoryItemInfo(dirItem, &dirItemInfo);
-				if(strcmp(dirItemInfo.szFileName, "DCIM") == 0 && dirItemInfo.isFolder) {
-					directoryItem = dirItem;
-					break;
-				}
-				Eds::SafeRelease(dirItem);
-			}
-		} catch (Eds::Exception& e) {
-			ofLogError() << "There was an error getting the DCIM folder: " << e.what();
-		}
-	}
-	
+
 	// from EDSDK API sample 6.3.6
 	void DownloadImage(EdsDirectoryItemRef directoryItem, ofBuffer& imageBuffer, bool deleteAfterDownload) {
-		try {
-			EdsStreamRef stream = NULL;
-			EdsDirectoryItemInfo dirItemInfo;
-			Eds::GetDirectoryItemInfo(directoryItem, &dirItemInfo);
-			Eds::CreateMemoryStream(0, &stream);
-			Eds::Download(directoryItem, dirItemInfo.size, stream);
-			Eds::DownloadComplete(directoryItem);
-			Eds::CopyStream(stream, imageBuffer);
-			if(deleteAfterDownload) {
-				Eds::DeleteDirectoryItem(directoryItem);
-			}
-			Eds::SafeRelease(stream);
-		} catch (Eds::Exception& e) {
-			ofLogError() << "There was an error downloading the image: " << e.what();
+		EdsStreamRef stream = NULL;
+		EdsDirectoryItemInfo dirItemInfo;
+		Eds::GetDirectoryItemInfo(directoryItem, &dirItemInfo);
+		Eds::CreateMemoryStream(0, &stream);
+		Eds::Download(directoryItem, dirItemInfo.size, stream);
+		Eds::DownloadComplete(directoryItem);
+		Eds::CopyStream(stream, imageBuffer);
+		if(deleteAfterDownload) {
+			Eds::DeleteDirectoryItem(directoryItem);
 		}
+		Eds::SafeRelease(stream);
 	}
 	
 	// from EDSDK API sample 6.3.10

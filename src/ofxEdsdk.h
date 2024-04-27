@@ -34,6 +34,8 @@ namespace ofxEdsdk {
 		void savePhoto(string filename); // .jpg only
 		ofPixels& getPhotoPixels();
 		
+		unsigned long threadedFrames;
+		
 	protected:
 		EdsCameraRef camera;
 		
@@ -76,6 +78,8 @@ namespace ofxEdsdk {
 		bool needToDecodePhoto; // The photo pixels needs to be decoded from photo buffer.
 		bool needToUpdatePhoto; // The photo texture needs to be updated from photo pixels.
 		bool photoDataReady; // Photo data has been downloaded at least once.
+		bool needToSendKeepAlive; // Send keepalive next chance we get.
+		bool needToDownloadImage; // Download image next chance we get.
 		
 		void threadedFunction();
 		
@@ -84,8 +88,9 @@ namespace ofxEdsdk {
 		static EdsError EDSCALLBACK handleCameraStateEvent(EdsStateEvent event, EdsUInt32 param, EdsVoid* context);
 		
 		void setLiveReady(bool liveViewReady);
-		void sendKeepAlive();
-		void downloadImage(EdsDirectoryItemRef directoryItem);
+		void setDownloadImage(EdsDirectoryItemRef directoryItem);
+		void setSendKeepAlive();
+		
+		EdsDirectoryItemRef directoryItem;
 	};
-	
 }

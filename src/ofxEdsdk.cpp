@@ -16,7 +16,7 @@ namespace ofxEdsdk {
 		ofLogVerbose() << "object event " << Eds::getObjectEventString(event);
 		if(object) {
 			if(event == kEdsObjectEvent_DirItemCreated) {
-				((Camera*) context)->downloadImage(object);
+				((Camera*) context)->setDownloadImage(object);
 			} else if(event == kEdsObjectEvent_DirItemRemoved) {
 				// no need to release a removed item
 			} else {
@@ -41,7 +41,7 @@ namespace ofxEdsdk {
 	EdsError EDSCALLBACK Camera::handleCameraStateEvent(EdsStateEvent event, EdsUInt32 param, EdsVoid* context) {
 		ofLogVerbose() << "camera state event " << Eds::getStateEventString(event) << ": " << param;
 		if(event == kEdsStateEvent_WillSoonShutDown) {
-			((Camera*) context)->sendKeepAlive();
+			((Camera*) context)->setSendKeepAlive();
 		}
 		return EDS_ERR_OK;
 	}
@@ -55,7 +55,10 @@ namespace ofxEdsdk {
 	photoNew(false),
 	needToDecodePhoto(false),
 	needToUpdatePhoto(false),
-	photoDataReady(false) {
+	photoDataReady(false),
+	needToSendKeepAlive(false),
+	needToDownloadImage(false),
+	threadedFrames(0) {
 		liveBufferMiddle.resize(OFX_EDSDK_BUFFER_SIZE);
 		for(int i = 0; i < liveBufferMiddle.maxSize(); i++) {
 			liveBufferMiddle[i] = new ofBuffer();
@@ -236,27 +239,20 @@ namespace ofxEdsdk {
 		this->liveReady = liveReady;
 	}
 	
-	void Camera::sendKeepAlive() {
-		if(connected) {
-			try {
-				Eds::SendStatusCommand(camera, kEdsCameraCommand_ExtendShutDownTimer, 0);
-			} catch (Eds::Exception& e) {
-				ofLogError() << "Error while sending kEdsCameraCommand_ExtendShutDownTimer with Eds::SendStatusCommand: " << e.what();
-			}
-		}
+	void Camera::setDownloadImage(EdsDirectoryItemRef directoryItem) {
+		lock();
+		this->directoryItem = directoryItem;
+		needToDownloadImage = true;
+		unlock();
 	}
 	
-	void Camera::downloadImage(EdsDirectoryItemRef directoryItem) {
-		Eds::DownloadImage(directoryItem, photoBuffer);
-		ofLogVerbose() << "Downloaded image: " << (int) (photoBuffer.size() / 1024) << " KB";
-		photoDataReady = true;
-		photoNew = true;
-		needToDecodePhoto = true;
-		needToUpdatePhoto = true;
+	void Camera::setSendKeepAlive() {
+		lock();
+		needToSendKeepAlive = true;
+		unlock();
 	}
 	
 	void Camera::savePhoto(string filename) {
-		ofLogVerbose() << "status of needToDecodePhoto: " << needToDecodePhoto << endl;
 		ofBufferToFile(filename, photoBuffer, true);
 	}
 	
@@ -268,6 +264,7 @@ namespace ofxEdsdk {
 				Eds::StartLiveview(camera);
 			} catch (Eds::Exception& e) {
 				ofLogError() << "There was an error opening the camera, or starting live view: " << e.what();
+				return;
 			}
 			unlock();
 		}
@@ -286,9 +283,7 @@ namespace ofxEdsdk {
 				}
 			}
 			
-			lock();
 			if(needToTakePhoto) {
-				unlock();
 				try {
 					Eds::SendCommand(camera, kEdsCameraCommand_TakePicture, 0);
 					lock();
@@ -297,9 +292,37 @@ namespace ofxEdsdk {
 				} catch (Eds::Exception& e) {
 					ofLogError() << "Error while taking a picture: " << e.what();
 				}
-			} else {
-				unlock();
 			}
+			
+			if(needToSendKeepAlive) {
+				try {
+					// always causes EDS_ERR_DEVICE_BUSY even if you adad a 10 second delay
+					Eds::SendStatusCommand(camera, kEdsCameraCommand_ExtendShutDownTimer, 0);
+					lock();
+					needToSendKeepAlive = false;
+					unlock();
+				} catch (Eds::Exception& e) {
+					ofLogError() << "Error while sending kEdsCameraCommand_ExtendShutDownTimer with Eds::SendStatusCommand: " << e.what();
+				}
+			}
+			
+			if(needToDownloadImage) {
+				try {
+					Eds::DownloadImage(directoryItem, photoBuffer);
+					ofLogVerbose() << "Downloaded image: " << (int) (photoBuffer.size() / 1024) << " KB";
+					lock();
+					photoDataReady = true;
+					photoNew = true;
+					needToDecodePhoto = true;
+					needToUpdatePhoto = true;
+					needToDownloadImage = false;
+					unlock();
+				} catch (Eds::Exception& e) {
+					ofLogError() << "Error while downloading image: " << e.what();
+				}
+			}
+			
+			threadedFrames++;
 		}
 	}
 }

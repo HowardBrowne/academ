@@ -1,5 +1,7 @@
 #include "testApp.h"
 
+unsigned long mainFrames = 0;
+
 void testApp::setup() {
 	ofSetLogLevel(OF_LOG_VERBOSE);
 	camera.setup();
@@ -15,6 +17,7 @@ void testApp::update() {
 		// or just save the photo to disk (jpg only):
 		camera.savePhoto(ofToString(ofGetFrameNum()) + ".jpg");
 	}
+	mainFrames++;
 }
 
 void testApp::draw() {
@@ -28,6 +31,8 @@ void testApp::draw() {
 			(int) camera.getFrameRate() << " cam-fps";
 		ofDrawBitmapString(status.str(), 10, 20);
 	}
+	
+	ofDrawBitmapString(ofToString(mainFrames) + " " + ofToString(camera.threadedFrames), 10, 40);
 }
 
 void testApp::keyPressed(int key) {

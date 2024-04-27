@@ -64,15 +64,11 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		27926A3213EA7BE3003F6797 /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = .gitignore; path = ../../../addons/ofxEdsdk/lib/EDSDK/Framework/.gitignore; sourceTree = SOURCE_ROOT; };
 		27926A3313EA7BE3003F6797 /* DPP.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DPP.framework; path = ../../../addons/ofxEdsdk/lib/EDSDK/Framework/DPP.framework; sourceTree = SOURCE_ROOT; };
 		27926A3413EA7BE3003F6797 /* EDSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = EDSDK.framework; path = ../../../addons/ofxEdsdk/lib/EDSDK/Framework/EDSDK.framework; sourceTree = SOURCE_ROOT; };
-		27926A3513EA7BE3003F6797 /* readme */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = readme; path = ../../../addons/ofxEdsdk/lib/EDSDK/Framework/readme; sourceTree = SOURCE_ROOT; };
-		27926A3713EA7BE3003F6797 /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = .gitignore; path = ../../../addons/ofxEdsdk/lib/EDSDK/Header/.gitignore; sourceTree = SOURCE_ROOT; };
 		27926A3813EA7BE3003F6797 /* EDSDK.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EDSDK.h; path = ../../../addons/ofxEdsdk/lib/EDSDK/Header/EDSDK.h; sourceTree = SOURCE_ROOT; };
 		27926A3913EA7BE3003F6797 /* EDSDKErrors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EDSDKErrors.h; path = ../../../addons/ofxEdsdk/lib/EDSDK/Header/EDSDKErrors.h; sourceTree = SOURCE_ROOT; };
 		27926A3A13EA7BE3003F6797 /* EDSDKTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EDSDKTypes.h; path = ../../../addons/ofxEdsdk/lib/EDSDK/Header/EDSDKTypes.h; sourceTree = SOURCE_ROOT; };
-		27926A3B13EA7BE3003F6797 /* readme */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = readme; path = ../../../addons/ofxEdsdk/lib/EDSDK/Header/readme; sourceTree = SOURCE_ROOT; };
 		27926A4313EA7BE3003F6797 /* ofxEdsdk.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxEdsdk.cpp; path = ../../../addons/ofxEdsdk/src/ofxEdsdk.cpp; sourceTree = SOURCE_ROOT; };
 		27926A4413EA7BE3003F6797 /* ofxEdsdk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxEdsdk.h; path = ../../../addons/ofxEdsdk/src/ofxEdsdk.h; sourceTree = SOURCE_ROOT; };
 		27C3C1E913EB98FD002FA441 /* RateTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RateTimer.h; path = ../src/RateTimer.h; sourceTree = SOURCE_ROOT; };
@@ -167,10 +163,8 @@
 		27926A3113EA7BE3003F6797 /* Framework */ = {
 			isa = PBXGroup;
 			children = (
-				27926A3213EA7BE3003F6797 /* .gitignore */,
 				27926A3313EA7BE3003F6797 /* DPP.framework */,
 				27926A3413EA7BE3003F6797 /* EDSDK.framework */,
-				27926A3513EA7BE3003F6797 /* readme */,
 			);
 			name = Framework;
 			path = ../../../addons/ofxEdsdk/lib/EDSDK/Framework;
@@ -179,11 +173,9 @@
 		27926A3613EA7BE3003F6797 /* Header */ = {
 			isa = PBXGroup;
 			children = (
-				27926A3713EA7BE3003F6797 /* .gitignore */,
 				27926A3813EA7BE3003F6797 /* EDSDK.h */,
 				27926A3913EA7BE3003F6797 /* EDSDKErrors.h */,
 				27926A3A13EA7BE3003F6797 /* EDSDKTypes.h */,
-				27926A3B13EA7BE3003F6797 /* readme */,
 			);
 			name = Header;
 			path = ../../../addons/ofxEdsdk/lib/EDSDK/Header;

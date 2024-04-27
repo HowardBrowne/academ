@@ -177,7 +177,7 @@ namespace Eds {
 			default: return "[unrecognized EdsError]";
 		}
 	}
-	
+
 	std::string getPropertyIDString(EdsPropertyID property) {
 		switch(property) {
 				/*----------------------------------
@@ -186,7 +186,6 @@ namespace Eds {
 			case kEdsPropID_Unknown: return "kEdsPropID_Unknown";
 				
 			case kEdsPropID_ProductName: return "kEdsPropID_ProductName";
-			case kEdsPropID_BodyID: return "kEdsPropID_BodyID";
 			case kEdsPropID_OwnerName: return "kEdsPropID_OwnerName";
 			case kEdsPropID_MakerName: return "kEdsPropID_MakerName";
 			case kEdsPropID_DateTime: return "kEdsPropID_DateTime";
@@ -199,7 +198,7 @@ namespace Eds {
 			case kEdsPropID_MyMenu: return "kEdsPropID_MyMenu";
 				
 			case kEdsPropID_BatteryQuality: return "kEdsPropID_BatteryQuality";
-				
+			case kEdsPropID_BodyIDEx: return "kEdsPropID_BodyIDEx";				
 			case kEdsPropID_HDDirectoryStructure: return "kEdsPropID_HDDirectoryStructure";
 				
 				
@@ -228,7 +227,6 @@ namespace Eds {
 			case kEdsPropID_ColorMatrix: return "kEdsPropID_ColorMatrix";
 			case kEdsPropID_PictureStyle: return "kEdsPropID_PictureStyle";
 			case kEdsPropID_PictureStyleDesc: return "kEdsPropID_PictureStyleDesc";
-			case kEdsPropID_ETTL2Mode: return "kEdsPropID_ETTL2Mode";
 			case kEdsPropID_PictureStyleCaption: return "kEdsPropID_PictureStyleCaption";
 				
 				/*----------------------------------

@@ -10,8 +10,6 @@
 */
 
 namespace Eds {
-	void GetVolume(EdsCameraRef camera, EdsVolumeRef volume);
-	void GetDCIMFolder(EdsVolumeRef volume, EdsDirectoryItemRef directoryItem);
 	void DownloadImage(EdsDirectoryItemRef directoryItem, ofBuffer& imageBuffer, bool deleteAfterDownload = true);
 	void StartLiveview(EdsCameraRef camera);
 	bool DownloadEvfData(EdsCameraRef camera, ofBuffer& imageBuffer);
