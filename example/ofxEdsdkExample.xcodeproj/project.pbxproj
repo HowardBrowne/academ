@@ -14,6 +14,8 @@
 		27C3C33413EBD91A002FA441 /* EdsStrings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27C3C32F13EBD91A002FA441 /* EdsStrings.cpp */; };
 		27C3C33513EBD91A002FA441 /* EdsWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27C3C33113EBD91A002FA441 /* EdsWrapper.cpp */; };
 		27C3C3BD13EBE53D002FA441 /* EdsExamples.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27C3C3BC13EBE53D002FA441 /* EdsExamples.cpp */; };
+		27FD092D1442120500EE9C60 /* DPP.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 27926A3313EA7BE3003F6797 /* DPP.framework */; };
+		27FD092E1442120500EE9C60 /* EDSDK.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 27926A3413EA7BE3003F6797 /* EDSDK.framework */; };
 		BBAB23CB13894F3D00AA2426 /* GLUT.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BBAB23BE13894E4700AA2426 /* GLUT.framework */; };
 		E4328149138ABC9F0047C5CB /* openFrameworks.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4328148138ABC890047C5CB /* openFrameworks.a */; };
 		E45BE97B0E8CC7DD009D7055 /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9710E8CC7DD009D7055 /* AGL.framework */; };
@@ -57,6 +59,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				27FD092D1442120500EE9C60 /* DPP.framework in CopyFiles */,
+				27FD092E1442120500EE9C60 /* EDSDK.framework in CopyFiles */,
 				BBAB23CB13894F3D00AA2426 /* GLUT.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
