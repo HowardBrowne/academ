@@ -57,8 +57,7 @@ namespace ofxEdsdk {
 	needToUpdatePhoto(false),
 	photoDataReady(false),
 	needToSendKeepAlive(false),
-	needToDownloadImage(false),
-	threadedFrames(0) {
+	needToDownloadImage(false) {
 		liveBufferMiddle.resize(OFX_EDSDK_BUFFER_SIZE);
 		for(int i = 0; i < liveBufferMiddle.maxSize(); i++) {
 			liveBufferMiddle[i] = new ofBuffer();
@@ -296,14 +295,15 @@ namespace ofxEdsdk {
 			
 			if(needToSendKeepAlive) {
 				try {
-					// always causes EDS_ERR_DEVICE_BUSY even if you adad a 10 second delay
+					// always causes EDS_ERR_DEVICE_BUSY, even with live view disabled or a delay
+					// but if it's not here, then the camera shuts down after 5 minutes.
 					Eds::SendStatusCommand(camera, kEdsCameraCommand_ExtendShutDownTimer, 0);
-					lock();
-					needToSendKeepAlive = false;
-					unlock();
 				} catch (Eds::Exception& e) {
 					ofLogError() << "Error while sending kEdsCameraCommand_ExtendShutDownTimer with Eds::SendStatusCommand: " << e.what();
 				}
+				lock();
+				needToSendKeepAlive = false;
+				unlock();
 			}
 			
 			if(needToDownloadImage) {
@@ -321,8 +321,6 @@ namespace ofxEdsdk {
 					ofLogError() << "Error while downloading image: " << e.what();
 				}
 			}
-			
-			threadedFrames++;
 		}
 	}
 }

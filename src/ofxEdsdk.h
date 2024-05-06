@@ -34,8 +34,6 @@ namespace ofxEdsdk {
 		void savePhoto(string filename); // .jpg only
 		ofPixels& getPhotoPixels();
 		
-		unsigned long threadedFrames;
-		
 	protected:
 		EdsCameraRef camera;
 		
