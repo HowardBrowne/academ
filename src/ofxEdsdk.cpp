@@ -125,7 +125,6 @@ namespace ofxEdsdk {
 			liveBufferMiddle.pop();
 			unlock();
 			ofLoadImage(livePixels, liveBufferFront);
-			frameNew = true;
 			if(liveTexture.getWidth() != livePixels.getWidth() ||
 				 liveTexture.getHeight() != livePixels.getHeight()) {
 				liveTexture.allocate(livePixels.getWidth(), livePixels.getHeight(), GL_RGB8);
@@ -133,6 +132,7 @@ namespace ofxEdsdk {
 			liveTexture.loadData(livePixels);
 			lock();
 			liveDataReady = true;
+			frameNew = true;
 			unlock();
 		} else {
 			unlock();
@@ -291,6 +291,9 @@ namespace ofxEdsdk {
 				} catch (Eds::Exception& e) {
 					ofLogError() << "Error while taking a picture: " << e.what();
 				}
+				
+				// the t2i can run at 30 fps = 33 ms, so this might cause frame drops
+				ofSleepMillis(30);
 			}
 			
 			if(needToSendKeepAlive) {
