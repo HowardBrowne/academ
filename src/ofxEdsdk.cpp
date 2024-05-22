@@ -57,7 +57,8 @@ namespace ofxEdsdk {
 	needToUpdatePhoto(false),
 	photoDataReady(false),
 	needToSendKeepAlive(false),
-	needToDownloadImage(false) {
+	needToDownloadImage(false),
+	resetIntervalMinutes(25) {
 		liveBufferMiddle.resize(OFX_EDSDK_BUFFER_SIZE);
 		for(int i = 0; i < liveBufferMiddle.maxSize(); i++) {
 			liveBufferMiddle[i] = new ofBuffer();
@@ -159,10 +160,9 @@ namespace ofxEdsdk {
 	
 	float Camera::getFrameRate() {
 		float frameRate;
-		if(lock()) {
-			frameRate = fps.getFrameRate();
-			unlock();
-		}
+		lock();
+		frameRate = fps.getFrameRate();
+		unlock();
 		return frameRate;
 	}
 	
@@ -255,18 +255,31 @@ namespace ofxEdsdk {
 		ofBufferToFile(filename, photoBuffer, true);
 	}
 	
-	void Camera::threadedFunction() {
-		if(lock()) {
-			try {
-				Eds::OpenSession(camera);
-				connected = true;
-				Eds::StartLiveview(camera);
-			} catch (Eds::Exception& e) {
-				ofLogError() << "There was an error opening the camera, or starting live view: " << e.what();
-				return;
+	void Camera::resetLiveView() {
+		lock();
+		if(connected) {
+			if(liveReady) {
+				Eds::EndLiveview(camera);
+				liveReady = false;
 			}
-			unlock();
+			Eds::StartLiveview(camera);
+			lastResetTime = ofGetElapsedTimef();
 		}
+		unlock();
+	}
+	
+	void Camera::threadedFunction() {
+		lock();
+		try {
+			Eds::OpenSession(camera);
+			connected = true;
+			Eds::StartLiveview(camera);
+		} catch (Eds::Exception& e) {
+			ofLogError() << "There was an error opening the camera, or starting live view: " << e.what();
+			return;
+		}
+		lastResetTime = ofGetElapsedTimef();
+		unlock();
 		
 		// threaded variables:
 		// liveReady, liveBufferMiddle, liveBufferBack, fps, needToTakePhoto
@@ -323,6 +336,11 @@ namespace ofxEdsdk {
 				} catch (Eds::Exception& e) {
 					ofLogError() << "Error while downloading image: " << e.what();
 				}
+			}
+			
+			float timeSinceLastReset = ofGetElapsedTimef() - lastResetTime;
+			if(timeSinceLastReset > resetIntervalMinutes * 60) {
+				resetLiveView();
 			}
 		}
 	}

@@ -81,6 +81,11 @@ namespace ofxEdsdk {
 		
 		void threadedFunction();
 		
+		// the liveview needs to be reset every so often to avoid the camera turning off
+		float resetIntervalMinutes;
+		float lastResetTime;
+		void resetLiveView();
+		
 		static EdsError EDSCALLBACK handleObjectEvent(EdsObjectEvent event, EdsBaseRef object, EdsVoid* context);
 		static EdsError EDSCALLBACK handlePropertyEvent(EdsPropertyEvent event, EdsPropertyID propertyId, EdsUInt32 param, EdsVoid* context);
 		static EdsError EDSCALLBACK handleCameraStateEvent(EdsStateEvent event, EdsUInt32 param, EdsVoid* context);
