@@ -58,7 +58,7 @@ namespace ofxEdsdk {
 	photoDataReady(false),
 	needToSendKeepAlive(false),
 	needToDownloadImage(false),
-	resetIntervalMinutes(25) {
+	resetIntervalMinutes(15) {
 		liveBufferMiddle.resize(OFX_EDSDK_BUFFER_SIZE);
 		for(int i = 0; i < liveBufferMiddle.maxSize(); i++) {
 			liveBufferMiddle[i] = new ofBuffer();
@@ -304,9 +304,6 @@ namespace ofxEdsdk {
 				} catch (Eds::Exception& e) {
 					ofLogError() << "Error while taking a picture: " << e.what();
 				}
-				
-				// the t2i can run at 30 fps = 33 ms, so this might cause frame drops
-				ofSleepMillis(30);
 			}
 			
 			if(needToSendKeepAlive) {
@@ -342,6 +339,9 @@ namespace ofxEdsdk {
 			if(timeSinceLastReset > resetIntervalMinutes * 60) {
 				resetLiveView();
 			}
+			
+			// the t2i can run at 30 fps = 33 ms, so this might cause frame drops
+			ofSleepMillis(5);
 		}
 	}
 }
