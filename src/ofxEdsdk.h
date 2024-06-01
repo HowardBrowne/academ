@@ -25,14 +25,16 @@ namespace ofxEdsdk {
 		void draw(float x, float y);
 		void draw(float x, float y, float width, float height);
 		ofPixels& getLivePixels();
+		ofTexture& getLiveTexture();
 		float getFrameRate();
 		
 		void takePhoto(bool blocking = false);
 		bool isPhotoNew();
 		void drawPhoto(float x, float y);
 		void drawPhoto(float x, float y, float width, float height);
-		void savePhoto(string filename); // .jpg only
+		bool savePhoto(string filename); // .jpg only
 		ofPixels& getPhotoPixels();
+		ofTexture& getPhotoTexture();
 		
 	protected:
 		EdsCameraRef camera;

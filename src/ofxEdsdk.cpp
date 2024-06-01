@@ -207,6 +207,10 @@ namespace ofxEdsdk {
 		}
 	}
 	
+	ofTexture& Camera::getLiveTexture() {
+		return liveTexture;
+	}
+	
 	void Camera::drawPhoto(float x, float y) {
 		if(photoDataReady) {
 			ofPixels& photoPixels = getPhotoPixels();
@@ -215,6 +219,12 @@ namespace ofxEdsdk {
 	}
 	
 	void Camera::drawPhoto(float x, float y, float width, float height) {
+		if(photoDataReady) {
+			photoTexture.draw(x, y, width, height);
+		}
+	}
+	
+	ofTexture& Camera::getPhotoTexture() {
 		if(photoDataReady) {
 			ofPixels& photoPixels = getPhotoPixels();
 			if(needToUpdatePhoto) {
@@ -225,8 +235,8 @@ namespace ofxEdsdk {
 				photoTexture.loadData(photoPixels);
 				needToUpdatePhoto = false;
 			}
-			photoTexture.draw(x, y, width, height);
 		}
+		return photoTexture;
 	}
 	
 	bool Camera::isLiveReady() const {
@@ -251,8 +261,8 @@ namespace ofxEdsdk {
 		unlock();
 	}
 	
-	void Camera::savePhoto(string filename) {
-		ofBufferToFile(filename, photoBuffer, true);
+	bool Camera::savePhoto(string filename) {
+		return ofBufferToFile(filename, photoBuffer, true);
 	}
 	
 	void Camera::resetLiveView() {
