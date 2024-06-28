@@ -2,7 +2,8 @@ ofxEdsdk requires the EDSDK library from Canon.
 
 ofxEdsdk was developed with support from YCAM http://www.ycam.jp/
 
-Install Instructions
+
+###Install Instructions
 
 1. Apply for a developer's license from [Canon's website](http://consumer.usa.canon.com/cusa/support/consumer/eos_slr_camera_systems/eos_digital_slr_cameras/digital_rebel_xt?fileURL=ps_sdk_form&pageKeyCode=downloadLicense&id=0901e02480057a74_1&productOverviewCid=0901e0248003ce28&keycode=Sdk_Lic) 
 2. After you have been approved (can take anywhere from minutes to a day or two), follow the download instructions included in your confirmation email from Canon.
