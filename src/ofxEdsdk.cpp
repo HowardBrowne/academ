@@ -268,10 +268,6 @@ namespace ofxEdsdk {
 	void Camera::resetLiveView() {
 		lock();
 		if(connected) {
-			if(liveReady) {
-				Eds::EndLiveview(camera);
-				liveReady = false;
-			}
 			Eds::StartLiveview(camera);
 			lastResetTime = ofGetElapsedTimef();
 		}
