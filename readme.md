@@ -17,3 +17,5 @@ ofxEdsdk was developed with support from YCAM http://www.ycam.jp/
 10. Go into the "Build Phases" tab for the Target app. In the "Link Binary with Libraries" section, add the EDSDK frameworks by clicking the "+" button at the lower-left and selecting the two framework files: OF > addons > ofEdsdk > src > EDSDK > Framework
 
 Following these steps will include Canon's developer library and this wrapper for all its functions for use in OF. You should be able to run the blank project successfully.
+
+ofxEdsdk is tested with v2130 of the EDSDK library on OSX
