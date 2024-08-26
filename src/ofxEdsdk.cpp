@@ -9,7 +9,9 @@
  2 frames.
  */
 #define OFX_EDSDK_BUFFER_SIZE 4
-
+#ifdef TARGET_OSX
+#include <Cocoa/Cocoa.h>
+#endif
 namespace ofxEdsdk {
 	
 	EdsError EDSCALLBACK Camera::handleObjectEvent(EdsObjectEvent event, EdsBaseRef object, EdsVoid* context) {
@@ -105,7 +107,8 @@ namespace ofxEdsdk {
 				EdsDeviceInfo info;
 				Eds::GetDeviceInfo(camera, &info);
 				Eds::SafeRelease(cameraList);
-				
+                ofLogVerbose("ofxEdsdk::setup") << "connected camera model: " <<  info.szDeviceDescription << " " << info.szPortName << endl;
+                
 				startThread(true, false);
 				return true;
 			} else {
@@ -118,6 +121,7 @@ namespace ofxEdsdk {
 	}
 	
 	void Camera::update() {
+        if(connected){
 		lock();
 		if(liveBufferMiddle.size() > 0) {
 			// decoding the jpeg in the main thread allows the capture thread to run in a tighter loop.
@@ -138,6 +142,7 @@ namespace ofxEdsdk {
 		} else {
 			unlock();
 		}
+        }
 	}
 	
 	bool Camera::isFrameNew() {
@@ -275,11 +280,15 @@ namespace ofxEdsdk {
 	}
 	
 	void Camera::threadedFunction() {
+#ifdef TARGET_OSX
+        
+        NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
+#endif
 		lock();
 		try {
 			Eds::OpenSession(camera);
 			connected = true;
-			Eds::StartLiveview(camera);
+		//	Eds::StartLiveview(camera);
 		} catch (Eds::Exception& e) {
 			ofLogError() << "There was an error opening the camera, or starting live view: " << e.what();
 			return;
@@ -349,5 +358,10 @@ namespace ofxEdsdk {
 			// the t2i can run at 30 fps = 33 ms, so this might cause frame drops
 			ofSleepMillis(5);
 		}
+#ifdef TARGET_OSX
+        [pool drain];
+        
+#endif
 	}
+
 }
