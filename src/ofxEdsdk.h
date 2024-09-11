@@ -97,5 +97,9 @@ namespace ofxEdsdk {
 		void setSendKeepAlive();
 		
 		EdsDirectoryItemRef directoryItem;
+#ifdef TARGET_OSX        
+        int initTime;
+        bool bTryInitLiveView;
+#endif
 	};
 }

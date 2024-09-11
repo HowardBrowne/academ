@@ -9,8 +9,12 @@
  2 frames.
  */
 #define OFX_EDSDK_BUFFER_SIZE 4
+#define OFX_EDSDK_LIVE_DELAY 100
 #ifdef TARGET_OSX
 #include <Cocoa/Cocoa.h>
+#elif TARGET_WIN32
+#define _WIN32_DCOM
+#include <objbase.h>
 #endif
 namespace ofxEdsdk {
 	
@@ -60,6 +64,9 @@ namespace ofxEdsdk {
 	photoDataReady(false),
 	needToSendKeepAlive(false),
 	needToDownloadImage(false),
+#ifdef  TARGET_OSX
+	bTryInitLiveView(false),
+#endif
 	resetIntervalMinutes(15) {
 		liveBufferMiddle.resize(OFX_EDSDK_BUFFER_SIZE);
 		for(int i = 0; i < liveBufferMiddle.maxSize(); i++) {
@@ -107,8 +114,8 @@ namespace ofxEdsdk {
 				EdsDeviceInfo info;
 				Eds::GetDeviceInfo(camera, &info);
 				Eds::SafeRelease(cameraList);
-                ofLogVerbose("ofxEdsdk::setup") << "connected camera model: " <<  info.szDeviceDescription << " " << info.szPortName << endl;
-                
+				ofLogVerbose("ofxEdsdk::setup") << "connected camera model: " <<  info.szDeviceDescription << " " << info.szPortName << endl;
+				
 				startThread(true, false);
 				return true;
 			} else {
@@ -121,7 +128,15 @@ namespace ofxEdsdk {
 	}
 	
 	void Camera::update() {
-        if(connected){
+		if(connected){
+#ifdef TARGET_OSX
+			if (bTryInitLiveView) {
+				if (ofGetElapsedTimeMillis() - initTime > OFX_EDSDK_LIVE_DELAY) {
+					bTryInitLiveView = false;
+					resetLiveView();
+				}
+			}
+#endif
 		lock();
 		if(liveBufferMiddle.size() > 0) {
 			// decoding the jpeg in the main thread allows the capture thread to run in a tighter loop.
@@ -142,7 +157,7 @@ namespace ofxEdsdk {
 		} else {
 			unlock();
 		}
-        }
+		}
 	}
 	
 	bool Camera::isFrameNew() {
@@ -281,14 +296,21 @@ namespace ofxEdsdk {
 	
 	void Camera::threadedFunction() {
 #ifdef TARGET_OSX
-        
-        NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
-#endif
+		
+		NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
+#elif TARGET_WIN32
+		CoInitializeEx( NULL, 0x0);// OINIT_MULTITHREADED );
+#endif	
 		lock();
 		try {
 			Eds::OpenSession(camera);
 			connected = true;
-		//	Eds::StartLiveview(camera);
+#ifdef TARGET_OSX
+			bTryInitLiveView = true;
+			initTime = ofGetElapsedTimeMillis();
+#else
+			Eds::StartLiveview(camera);
+#endif
 		} catch (Eds::Exception& e) {
 			ofLogError() << "There was an error opening the camera, or starting live view: " << e.what();
 			return;
@@ -359,9 +381,9 @@ namespace ofxEdsdk {
 			ofSleepMillis(5);
 		}
 #ifdef TARGET_OSX
-        [pool drain];
-        
+		[pool drain];
+#elif TARGET_WIN32
+		CoUninitialize();
 #endif
 	}
-
 }
