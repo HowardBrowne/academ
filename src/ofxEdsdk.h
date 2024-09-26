@@ -35,7 +35,7 @@ namespace ofxEdsdk {
 		bool savePhoto(string filename); // .jpg only
 		ofPixels& getPhotoPixels();
 		ofTexture& getPhotoTexture();
-				void resetLiveView();
+
 	protected:
 		EdsCameraRef camera;
 		
@@ -86,7 +86,7 @@ namespace ofxEdsdk {
 		// the liveview needs to be reset every so often to avoid the camera turning off
 		float resetIntervalMinutes;
 		float lastResetTime;
-//		void resetLiveView();
+		void resetLiveView();
 		
 		static EdsError EDSCALLBACK handleObjectEvent(EdsObjectEvent event, EdsBaseRef object, EdsVoid* context);
 		static EdsError EDSCALLBACK handlePropertyEvent(EdsPropertyEvent event, EdsPropertyID propertyId, EdsUInt32 param, EdsVoid* context);

@@ -2,7 +2,7 @@
 
 void testApp::setup() {
 	ofSetVerticalSync(true);
-	//ofSetLogLevel(OF_LOG_VERBOSE);
+	ofSetLogLevel(OF_LOG_VERBOSE);
 	camera.setup();
 }
 
@@ -35,7 +35,4 @@ void testApp::keyPressed(int key) {
 	if(key == ' ') {
 		camera.takePhoto();
 	}
-    if (key == 'l') {
-        camera.resetLiveView();
-    }
 }
