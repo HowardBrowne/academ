@@ -35,7 +35,7 @@ namespace ofxEdsdk {
 		bool savePhoto(string filename); // .jpg only
 		ofPixels& getPhotoPixels();
 		ofTexture& getPhotoTexture();
-		
+
 	protected:
 		EdsCameraRef camera;
 		
@@ -97,5 +97,9 @@ namespace ofxEdsdk {
 		void setSendKeepAlive();
 		
 		EdsDirectoryItemRef directoryItem;
+#ifdef TARGET_OSX        
+        int initTime;
+        bool bTryInitLiveView;
+#endif
 	};
 }
