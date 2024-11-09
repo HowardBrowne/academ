@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>7035E332-D588-4035-8821-0DAFB06EB5D1</string>
+	<key>IDESourceControlProjectName</key>
+	<string>ofxEdsdkExample</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>6302C195-5E89-4469-A367-A6F0CD19813C</key>
+		<string>ssh://github.com/kylemcdonald/openFrameworks.git</string>
+		<key>9D5F673A-40BB-4104-9059-BA41BD8798B8</key>
+		<string>ssh://github.com/kylemcdonald/ofxEdsdk.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>addons/ofxEdsdk/example/ofxEdsdkExample.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>6302C195-5E89-4469-A367-A6F0CD19813C</key>
+		<string>../../../../..</string>
+		<key>9D5F673A-40BB-4104-9059-BA41BD8798B8</key>
+		<string>../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>ssh://github.com/kylemcdonald/ofxEdsdk.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>6302C195-5E89-4469-A367-A6F0CD19813C</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>9D5F673A-40BB-4104-9059-BA41BD8798B8</string>
+			<key>IDESourceControlWCCName</key>
+			<string>ofxEdsdk</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>6302C195-5E89-4469-A367-A6F0CD19813C</string>
+			<key>IDESourceControlWCCName</key>
+			<string>openFrameworks</string>
+		</dict>
+	</array>
+</dict>
+</plist>

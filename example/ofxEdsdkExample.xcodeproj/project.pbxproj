@@ -75,15 +75,15 @@
 		27926A3A13EA7BE3003F6797 /* EDSDKTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EDSDKTypes.h; path = ../../../addons/ofxEdsdk/lib/EDSDK/Header/EDSDKTypes.h; sourceTree = SOURCE_ROOT; };
 		27926A4313EA7BE3003F6797 /* ofxEdsdk.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = ofxEdsdk.cpp; path = ../../../addons/ofxEdsdk/src/ofxEdsdk.cpp; sourceTree = SOURCE_ROOT; };
 		27926A4413EA7BE3003F6797 /* ofxEdsdk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxEdsdk.h; path = ../../../addons/ofxEdsdk/src/ofxEdsdk.h; sourceTree = SOURCE_ROOT; };
-		27C3C1E913EB98FD002FA441 /* RateTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RateTimer.h; path = ../src/RateTimer.h; sourceTree = SOURCE_ROOT; };
-		27C3C32D13EBD91A002FA441 /* EdsException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EdsException.cpp; path = ../src/EdsWrapper/EdsException.cpp; sourceTree = SOURCE_ROOT; };
-		27C3C32E13EBD91A002FA441 /* EdsException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EdsException.h; path = ../src/EdsWrapper/EdsException.h; sourceTree = SOURCE_ROOT; };
-		27C3C32F13EBD91A002FA441 /* EdsStrings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EdsStrings.cpp; path = ../src/EdsWrapper/EdsStrings.cpp; sourceTree = SOURCE_ROOT; };
-		27C3C33013EBD91A002FA441 /* EdsStrings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EdsStrings.h; path = ../src/EdsWrapper/EdsStrings.h; sourceTree = SOURCE_ROOT; };
-		27C3C33113EBD91A002FA441 /* EdsWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EdsWrapper.cpp; path = ../src/EdsWrapper/EdsWrapper.cpp; sourceTree = SOURCE_ROOT; };
-		27C3C33213EBD91A002FA441 /* EdsWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EdsWrapper.h; path = ../src/EdsWrapper/EdsWrapper.h; sourceTree = SOURCE_ROOT; };
+		27C3C1E913EB98FD002FA441 /* RateTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RateTimer.h; path = ../../../addons/ofxEdsdk/src/RateTimer.h; sourceTree = SOURCE_ROOT; };
+		27C3C32D13EBD91A002FA441 /* EdsException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EdsException.cpp; path = ../../../addons/ofxEdsdk/src/EdsWrapper/EdsException.cpp; sourceTree = SOURCE_ROOT; };
+		27C3C32E13EBD91A002FA441 /* EdsException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EdsException.h; path = ../../../addons/ofxEdsdk/src/EdsWrapper/EdsException.h; sourceTree = SOURCE_ROOT; };
+		27C3C32F13EBD91A002FA441 /* EdsStrings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EdsStrings.cpp; path = ../../../addons/ofxEdsdk/src/EdsWrapper/EdsStrings.cpp; sourceTree = SOURCE_ROOT; };
+		27C3C33013EBD91A002FA441 /* EdsStrings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EdsStrings.h; path = ../../../addons/ofxEdsdk/src/EdsWrapper/EdsStrings.h; sourceTree = SOURCE_ROOT; };
+		27C3C33113EBD91A002FA441 /* EdsWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EdsWrapper.cpp; path = ../../../addons/ofxEdsdk/src/EdsWrapper/EdsWrapper.cpp; sourceTree = SOURCE_ROOT; };
+		27C3C33213EBD91A002FA441 /* EdsWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EdsWrapper.h; path = ../../../addons/ofxEdsdk/src/EdsWrapper/EdsWrapper.h; sourceTree = SOURCE_ROOT; };
 		27C3C39F13EBE473002FA441 /* EdsExamples.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EdsExamples.h; sourceTree = "<group>"; };
-		27C3C3BC13EBE53D002FA441 /* EdsExamples.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EdsExamples.cpp; path = ../src/EdsWrapper/EdsExamples.cpp; sourceTree = SOURCE_ROOT; };
+		27C3C3BC13EBE53D002FA441 /* EdsExamples.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EdsExamples.cpp; path = ../../../addons/ofxEdsdk/src/EdsWrapper/EdsExamples.cpp; sourceTree = SOURCE_ROOT; };
 		27C3C55C13EC19B7002FA441 /* FixedQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FixedQueue.h; sourceTree = "<group>"; };
 		BBAB23BE13894E4700AA2426 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = ../../../libs/glut/lib/osx/GLUT.framework; sourceTree = "<group>"; };
 		E4328143138ABC890047C5CB /* openFrameworksLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = openFrameworksLib.xcodeproj; path = ../../../libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj; sourceTree = SOURCE_ROOT; };
@@ -211,7 +211,7 @@
 				27C3C3BC13EBE53D002FA441 /* EdsExamples.cpp */,
 			);
 			name = EdsWrapper;
-			path = ../src/EdsWrapper;
+			path = ../../../addons/ofxEdsdk/src/EdsWrapper;
 			sourceTree = SOURCE_ROOT;
 		};
 		BB4B014C10F69532006C3DED /* addons */ = {
