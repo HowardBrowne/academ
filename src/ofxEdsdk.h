@@ -15,7 +15,7 @@ namespace ofxEdsdk {
 	public:
 		Camera();
 		~Camera();
-		bool setup(int deviceId = 0);
+		bool setup(int deviceId = 0, int orientationMode90 = 0);
 		
 		void update();
 		bool isFrameNew();
@@ -97,6 +97,9 @@ namespace ofxEdsdk {
 		void setSendKeepAlive();
 		
 		EdsDirectoryItemRef directoryItem;
+        
+        int rotateMode90;
+        
 #ifdef TARGET_OSX        
         int initTime;
         bool bTryInitLiveView;
