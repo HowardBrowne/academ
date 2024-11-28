@@ -12,7 +12,7 @@
 #define OFX_EDSDK_LIVE_DELAY 100
 #ifdef TARGET_OSX
 #include <Cocoa/Cocoa.h>
-#elif TARGET_WIN32
+#elif defined(TARGET_WIN32)
 #define _WIN32_DCOM
 #include <objbase.h>
 #endif
@@ -298,7 +298,7 @@ namespace ofxEdsdk {
 #ifdef TARGET_OSX
 		
 		NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
-#elif TARGET_WIN32
+#elif defined(TARGET_WIN32)
 		CoInitializeEx( NULL, 0x0);// OINIT_MULTITHREADED );
 #endif	
 		lock();
@@ -382,7 +382,7 @@ namespace ofxEdsdk {
 		}
 #ifdef TARGET_OSX
 		[pool drain];
-#elif TARGET_WIN32
+#elif defined(TARGET_WIN32)
 		CoUninitialize();
 #endif
 	}
