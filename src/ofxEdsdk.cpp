@@ -101,7 +101,7 @@ namespace ofxEdsdk {
 			EdsCameraListRef cameraList;
 			Eds::GetCameraList(&cameraList);
 			
-			UInt32 cameraCount;
+			EdsUInt32 cameraCount;
 			Eds::GetChildCount(cameraList, &cameraCount);
 			
 			if(cameraCount > 0) {				
