@@ -240,7 +240,7 @@ namespace ofxEdsdk {
 	
 	void Camera::drawPhoto(float x, float y, float width, float height) {
 		if(photoDataReady) {
-			photoTexture.draw(x, y, width, height);
+            getPhotoTexture().draw(x, y, width, height);
 		}
 	}
 	
