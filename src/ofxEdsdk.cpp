@@ -10,6 +10,10 @@
  */
 #define OFX_EDSDK_BUFFER_SIZE 4
 #define OFX_EDSDK_LIVE_DELAY 100
+
+#define OFX_EDSDK_JPG_FORMAT 14337
+#define OFX_EDSDK_MOV_FORMAT 45316
+
 #ifdef TARGET_OSX
 #include <Cocoa/Cocoa.h>
 #elif defined(TARGET_WIN32)
@@ -59,6 +63,9 @@ namespace ofxEdsdk {
 	frameNew(false),
 	needToTakePhoto(false),
 	photoNew(false),
+    needToStartRecording(false),
+    needToStopRecording(false),
+    movieNew(false),
 	needToDecodePhoto(false),
 	needToUpdatePhoto(false),
 	photoDataReady(false),
@@ -177,6 +184,15 @@ namespace ofxEdsdk {
 			return false;
 		}
 	}
+    
+	bool Camera::isMovieNew() {
+		if(movieNew) {
+			movieNew = false;
+			return true;
+		} else {
+			return false;
+		}
+	}
 	
 	float Camera::getFrameRate() {
 		float frameRate;
@@ -196,6 +212,20 @@ namespace ofxEdsdk {
 			}
 		}
 	}
+    
+    void Camera::beginMovieRecording()
+    {
+        lock();
+		needToStartRecording = true;
+		unlock();
+    }
+    
+    void Camera::endMovieRecording()
+    {
+        lock();
+		needToStopRecording = true;
+		unlock();
+    }
 	
 	ofPixels& Camera::getLivePixels() {
 		return livePixels;
@@ -342,6 +372,33 @@ namespace ofxEdsdk {
 					ofLogError() << "Error while taking a picture: " << e.what();
 				}
 			}
+            
+            if(needToStartRecording) {
+				try {
+                    EdsUInt32 saveTo = kEdsSaveTo_Camera;
+                    EdsSetPropertyData(camera, kEdsPropID_SaveTo, 0, sizeof(saveTo) , &saveTo);
+                    
+                    EdsUInt32 record_start = 4; // Begin movie shooting
+                    EdsSetPropertyData(camera, kEdsPropID_Record, 0, sizeof(record_start), &record_start);
+					lock();
+					needToStartRecording = false;
+					unlock();
+				} catch (Eds::Exception& e) {
+					ofLogError() << "Error while beginning to record: " << e.what();
+				}
+			}
+            
+            if(needToStopRecording) {
+				try {
+                    EdsUInt32 record_stop = 0; // End movie shooting
+                    EdsSetPropertyData(camera, kEdsPropID_Record, 0, sizeof(record_stop), &record_stop);
+					lock();
+					needToStopRecording = false;
+					unlock();
+				} catch (Eds::Exception& e) {
+					ofLogError() << "Error while stopping to record: " << e.what();
+				}
+			}
 			
 			if(needToSendKeepAlive) {
 				try {
@@ -358,17 +415,23 @@ namespace ofxEdsdk {
 			
 			if(needToDownloadImage) {
 				try {
-					Eds::DownloadImage(directoryItem, photoBuffer);
-					ofLogVerbose() << "Downloaded image: " << (int) (photoBuffer.size() / 1024) << " KB";
+					EdsDirectoryItemInfo dirItemInfo = Eds::DownloadImage(directoryItem, photoBuffer);
+					ofLogVerbose() << "Downloaded item: " << (int) (photoBuffer.size() / 1024) << " KB";
 					lock();
 					photoDataReady = true;
-					photoNew = true;
 					needToDecodePhoto = true;
 					needToUpdatePhoto = true;
 					needToDownloadImage = false;
+                    
+                    if (dirItemInfo.format == OFX_EDSDK_JPG_FORMAT) {
+                        photoNew = true;
+                    } else if (dirItemInfo.format == OFX_EDSDK_MOV_FORMAT) {
+                        movieNew = true;
+                    }
+                    
 					unlock();
 				} catch (Eds::Exception& e) {
-					ofLogError() << "Error while downloading image: " << e.what();
+					ofLogError() << "Error while downloading item: " << e.what();
 				}
 			}
 			

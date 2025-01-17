@@ -35,6 +35,10 @@ namespace ofxEdsdk {
 		bool savePhoto(string filename); // .jpg only
 		ofPixels& getPhotoPixels();
 		ofTexture& getPhotoTexture();
+        
+        void beginMovieRecording();
+        void endMovieRecording();
+        bool isMovieNew();
 
 	protected:
 		EdsCameraRef camera;
@@ -80,9 +84,13 @@ namespace ofxEdsdk {
 		bool photoDataReady; // Photo data has been downloaded at least once.
 		bool needToSendKeepAlive; // Send keepalive next chance we get.
 		bool needToDownloadImage; // Download image next chance we get.
+        
+        bool movieNew;
+        bool needToStartRecording; // threadedFunction() should start recording next chance it gets.
+        bool needToStopRecording; // threadedFunction() should start recording next chance it gets.
 		
 		void threadedFunction();
-		
+        		
 		// the liveview needs to be reset every so often to avoid the camera turning off
 		float resetIntervalMinutes;
 		float lastResetTime;

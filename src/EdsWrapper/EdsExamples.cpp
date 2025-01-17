@@ -5,7 +5,7 @@
 namespace Eds {
 
 	// from EDSDK API sample 6.3.6
-	void DownloadImage(EdsDirectoryItemRef directoryItem, ofBuffer& imageBuffer, bool deleteAfterDownload) {
+	EdsDirectoryItemInfo DownloadImage(EdsDirectoryItemRef directoryItem, ofBuffer& imageBuffer, bool deleteAfterDownload) {
 		EdsStreamRef stream = NULL;
 		EdsDirectoryItemInfo dirItemInfo;
 		Eds::GetDirectoryItemInfo(directoryItem, &dirItemInfo);
@@ -17,6 +17,8 @@ namespace Eds {
 			Eds::DeleteDirectoryItem(directoryItem);
 		}
 		Eds::SafeRelease(stream);
+        
+        return dirItemInfo;
 	}
 	
 	// from EDSDK API sample 6.3.10

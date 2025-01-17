@@ -12,4 +12,6 @@ public:
 	void keyPressed(int key);
 	
 	ofxEdsdk::Camera camera;
+    
+    bool bIsRecordingMovie;
 };
