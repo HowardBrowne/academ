@@ -10,7 +10,7 @@
 */
 
 namespace Eds {
-	void DownloadImage(EdsDirectoryItemRef directoryItem, ofBuffer& imageBuffer, bool deleteAfterDownload = true);
+	EdsDirectoryItemInfo DownloadImage(EdsDirectoryItemRef directoryItem, ofBuffer& imageBuffer, bool deleteAfterDownload = true);
 	void StartLiveview(EdsCameraRef camera);
 	bool DownloadEvfData(EdsCameraRef camera, ofBuffer& imageBuffer);
 	void EndLiveview(EdsCameraRef camera);
