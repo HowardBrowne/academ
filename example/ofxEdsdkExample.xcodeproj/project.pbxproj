@@ -14,6 +14,7 @@
 		27C3C33413EBD91A002FA441 /* EdsStrings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27C3C32F13EBD91A002FA441 /* EdsStrings.cpp */; };
 		27C3C33513EBD91A002FA441 /* EdsWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27C3C33113EBD91A002FA441 /* EdsWrapper.cpp */; };
 		27C3C3BD13EBE53D002FA441 /* EdsExamples.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27C3C3BC13EBE53D002FA441 /* EdsExamples.cpp */; };
+		27E7ED0919B50AF200670470 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27E7ED0819B50AF200670470 /* CoreVideo.framework */; };
 		27FD092D1442120500EE9C60 /* DPP.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 27926A3313EA7BE3003F6797 /* DPP.framework */; };
 		27FD092E1442120500EE9C60 /* EDSDK.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 27926A3413EA7BE3003F6797 /* EDSDK.framework */; };
 		BBAB23CB13894F3D00AA2426 /* GLUT.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BBAB23BE13894E4700AA2426 /* GLUT.framework */; };
@@ -85,6 +86,7 @@
 		27C3C39F13EBE473002FA441 /* EdsExamples.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EdsExamples.h; sourceTree = "<group>"; };
 		27C3C3BC13EBE53D002FA441 /* EdsExamples.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EdsExamples.cpp; path = ../../../addons/ofxEdsdk/src/EdsWrapper/EdsExamples.cpp; sourceTree = SOURCE_ROOT; };
 		27C3C55C13EC19B7002FA441 /* FixedQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FixedQueue.h; sourceTree = "<group>"; };
+		27E7ED0819B50AF200670470 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = ../../../../../../../System/Library/Frameworks/CoreVideo.framework; sourceTree = "<group>"; };
 		BBAB23BE13894E4700AA2426 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = ../../../libs/glut/lib/osx/GLUT.framework; sourceTree = "<group>"; };
 		E4328143138ABC890047C5CB /* openFrameworksLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = openFrameworksLib.xcodeproj; path = ../../../libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj; sourceTree = SOURCE_ROOT; };
 		E45BE9710E8CC7DD009D7055 /* AGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AGL.framework; path = /System/Library/Frameworks/AGL.framework; sourceTree = "<absolute>"; };
@@ -126,6 +128,7 @@
 				E45BE9840E8CC7DD009D7055 /* QuickTime.framework in Frameworks */,
 				E4C2424710CC5A17004149E2 /* AppKit.framework in Frameworks */,
 				E4C2424810CC5A17004149E2 /* Cocoa.framework in Frameworks */,
+				27E7ED0919B50AF200670470 /* CoreVideo.framework in Frameworks */,
 				E4C2424910CC5A17004149E2 /* IOKit.framework in Frameworks */,
 				27926A4513EA7BE3003F6797 /* DPP.framework in Frameworks */,
 				27926A4613EA7BE3003F6797 /* EDSDK.framework in Frameworks */,
@@ -225,6 +228,7 @@
 		BBAB23C913894ECA00AA2426 /* system frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				27E7ED0819B50AF200670470 /* CoreVideo.framework */,
 				E4C2424410CC5A17004149E2 /* AppKit.framework */,
 				E4C2424510CC5A17004149E2 /* Cocoa.framework */,
 				E4C2424610CC5A17004149E2 /* IOKit.framework */,
@@ -325,6 +329,8 @@
 /* Begin PBXProject section */
 		E4B69B4C0A3A1720003C02F2 /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+			};
 			buildConfigurationList = E4B69B4D0A3A1720003C02F2 /* Build configuration list for PBXProject "ofxEdsdkExample" */;
 			compatibilityVersion = "Xcode 2.4";
 			developmentRegion = English;

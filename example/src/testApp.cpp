@@ -2,7 +2,7 @@
 
 void testApp::setup() {
 	ofSetVerticalSync(true);
-	ofSetLogLevel(OF_LOG_VERBOSE);
+//	ofSetLogLevel(OF_LOG_VERBOSE);
     
     bIsRecordingMovie = false;
 	camera.setup();

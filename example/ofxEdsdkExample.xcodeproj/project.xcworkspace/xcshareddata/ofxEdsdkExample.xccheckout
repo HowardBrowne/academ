@@ -10,33 +10,57 @@
 	<string>ofxEdsdkExample</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
+		<key>2DE9C8846D9375EAACFABA8963120E8E7719BAF5</key>
+		<string>github.com:kylemcdonald/openFrameworks.git</string>
+		<key>36985836DF35EF8F5D7D4E20C1E7B9D301114BDF</key>
+		<string>github.com:kylemcdonald/ofxEdsdk.git</string>
 		<key>6302C195-5E89-4469-A367-A6F0CD19813C</key>
 		<string>ssh://github.com/kylemcdonald/openFrameworks.git</string>
 		<key>9D5F673A-40BB-4104-9059-BA41BD8798B8</key>
 		<string>ssh://github.com/kylemcdonald/ofxEdsdk.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>addons/ofxEdsdk/example/ofxEdsdkExample.xcodeproj/project.xcworkspace</string>
+	<string>example/ofxEdsdkExample.xcodeproj</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>6302C195-5E89-4469-A367-A6F0CD19813C</key>
-		<string>../../../../..</string>
-		<key>9D5F673A-40BB-4104-9059-BA41BD8798B8</key>
+		<key>2DE9C8846D9375EAACFABA8963120E8E7719BAF5</key>
+		<string>../../../..</string>
+		<key>36985836DF35EF8F5D7D4E20C1E7B9D301114BDF</key>
 		<string>../../..</string>
+		<key>6302C195-5E89-4469-A367-A6F0CD19813C</key>
+		<string>../../../../openFrameworks</string>
+		<key>9D5F673A-40BB-4104-9059-BA41BD8798B8</key>
+		<string>../../../..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
-	<string>ssh://github.com/kylemcdonald/ofxEdsdk.git</string>
+	<string>github.com:kylemcdonald/ofxEdsdk.git</string>
 	<key>IDESourceControlProjectVersion</key>
-	<integer>110</integer>
+	<integer>111</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>6302C195-5E89-4469-A367-A6F0CD19813C</string>
+	<string>36985836DF35EF8F5D7D4E20C1E7B9D301114BDF</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>2DE9C8846D9375EAACFABA8963120E8E7719BAF5</string>
+			<key>IDESourceControlWCCName</key>
+			<string></string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
 			<string>9D5F673A-40BB-4104-9059-BA41BD8798B8</string>
+			<key>IDESourceControlWCCName</key>
+			<string></string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>36985836DF35EF8F5D7D4E20C1E7B9D301114BDF</string>
 			<key>IDESourceControlWCCName</key>
 			<string>ofxEdsdk</string>
 		</dict>

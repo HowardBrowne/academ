@@ -125,7 +125,7 @@ namespace ofxEdsdk {
 				
                 rotateMode90 = orientationMode90;
 
-				startThread(true, false);
+				startThread(true);
 				return true;
 			} else {
 				ofLogError() << "No cameras are connected for ofxEds::Camera::setup().";

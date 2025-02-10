@@ -15,6 +15,9 @@ namespace ofxEdsdk {
 			averagePeriod = 0;
 			secondTick = false;
 		}
+		float setSmoothing(float smoothing) {
+            this->smoothing = smoothing;
+		}
 		float getFrameRate() {
 			return averagePeriod == 0 ? 0 : 1 / averagePeriod;
 		}
