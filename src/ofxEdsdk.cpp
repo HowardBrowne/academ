@@ -229,6 +229,10 @@ namespace ofxEdsdk {
 		needToStopRecording = true;
 		unlock();
     }
+    
+    void Camera::setOrientationMode(int orientationMode90) {
+        rotateMode90 = orientationMode90;
+    }
 	
 	ofPixels& Camera::getLivePixels() {
 		return livePixels;

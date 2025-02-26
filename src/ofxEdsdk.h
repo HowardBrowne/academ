@@ -28,6 +28,8 @@ namespace ofxEdsdk {
 		ofTexture& getLiveTexture();
 		float getFrameRate();
 		
+        void setOrientationMode(int orientationMode90);
+        
 		void takePhoto(bool blocking = false);
 		bool isPhotoNew();
 		void drawPhoto(float x, float y);
