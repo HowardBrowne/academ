@@ -23,9 +23,9 @@ namespace ofxEdsdk {
 		unsigned int getHeight() const;
 		bool isLiveReady() const;
 		void draw(float x, float y);
-		void draw(float x, float y, float width, float height);
-		ofPixels& getLivePixels();
-		ofTexture& getLiveTexture();
+        void draw(float x, float y, float width, float height);
+        const ofPixels& getLivePixels() const;
+        const ofTexture& getLiveTexture() const;
 		float getFrameRate();
 		
         void setOrientationMode(int orientationMode90);
@@ -34,9 +34,9 @@ namespace ofxEdsdk {
 		bool isPhotoNew();
 		void drawPhoto(float x, float y);
 		void drawPhoto(float x, float y, float width, float height);
-		bool savePhoto(string filename); // .jpg only
-		ofPixels& getPhotoPixels();
-		ofTexture& getPhotoTexture();
+        bool savePhoto(string filename); // .jpg only
+        const ofPixels& getPhotoPixels() const;
+        const ofTexture& getPhotoTexture() const;
         
         void beginMovieRecording();
         void endMovieRecording();
@@ -56,8 +56,8 @@ namespace ofxEdsdk {
 		 */
 		ofBuffer liveBufferBack, liveBufferFront;
 		FixedQueue<ofBuffer*> liveBufferMiddle;
-		ofPixels livePixels;
-		ofTexture liveTexture;
+		mutable ofPixels livePixels;
+		mutable ofTexture liveTexture;
 		
 		/*
 		 Photo data is read from the camera into photoBuffer when downloadImage() is
@@ -67,8 +67,8 @@ namespace ofxEdsdk {
 		 does not decode photoBuffer.
 		 */
 		ofBuffer photoBuffer;
-		ofPixels photoPixels;
-		ofTexture photoTexture;
+		mutable ofPixels photoPixels;
+		mutable ofTexture photoTexture;
 		
 		/*
 		 There are a few important state variables used for keeping track of what
@@ -81,8 +81,8 @@ namespace ofxEdsdk {
 		bool frameNew; // There has been a new frame since the user last checked isFrameNew().
 		bool needToTakePhoto; // threadedFunction() should take a picture next chance it gets.
 		bool photoNew; // There is a new photo since the user last checked isPhotoNew().
-		bool needToDecodePhoto; // The photo pixels needs to be decoded from photo buffer.
-		bool needToUpdatePhoto; // The photo texture needs to be updated from photo pixels.
+		mutable bool needToDecodePhoto; // The photo pixels needs to be decoded from photo buffer.
+		mutable bool needToUpdatePhoto; // The photo texture needs to be updated from photo pixels.
 		bool photoDataReady; // Photo data has been downloaded at least once.
 		bool needToSendKeepAlive; // Send keepalive next chance we get.
 		bool needToDownloadImage; // Download image next chance we get.

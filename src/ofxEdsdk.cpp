@@ -233,20 +233,20 @@ namespace ofxEdsdk {
     void Camera::setOrientationMode(int orientationMode90) {
         rotateMode90 = orientationMode90;
     }
-	
-	ofPixels& Camera::getLivePixels() {
+    
+	const ofPixels& Camera::getLivePixels() const {
 		return livePixels;
-	}
-	
-	ofPixels& Camera::getPhotoPixels() {
-		if(needToDecodePhoto) {
-			ofLoadImage(photoPixels, photoBuffer);
+    }
+    
+    const ofPixels& Camera::getPhotoPixels() const {
+        if(needToDecodePhoto) {
+            ofLoadImage(photoPixels, photoBuffer);
             photoPixels.rotate90(rotateMode90);
-			needToDecodePhoto = false;
-		}
-		return photoPixels;
-	}
-	
+            needToDecodePhoto = false;
+        }
+        return photoPixels;
+    }
+    
 	unsigned int Camera::getWidth() const {
 		return livePixels.getWidth();
 	}
@@ -264,14 +264,14 @@ namespace ofxEdsdk {
 			liveTexture.draw(x, y, width, height);
 		}
 	}
-	
-	ofTexture& Camera::getLiveTexture() {
+    
+	const ofTexture& Camera::getLiveTexture() const {
 		return liveTexture;
 	}
 	
 	void Camera::drawPhoto(float x, float y) {
 		if(photoDataReady) {
-			ofPixels& photoPixels = getPhotoPixels();
+			const ofPixels& photoPixels = getPhotoPixels();
 			draw(x, y, getWidth(), getHeight());
 		}
 	}
@@ -282,9 +282,9 @@ namespace ofxEdsdk {
 		}
 	}
 	
-	ofTexture& Camera::getPhotoTexture() {
+	const ofTexture& Camera::getPhotoTexture() const {
 		if(photoDataReady) {
-			ofPixels& photoPixels = getPhotoPixels();
+			const ofPixels& photoPixels = getPhotoPixels();
 			if(needToUpdatePhoto) {
 				if(photoTexture.getWidth() != photoPixels.getWidth() ||
 					 photoTexture.getHeight() != photoPixels.getHeight()) {
