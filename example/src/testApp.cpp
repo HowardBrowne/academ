@@ -8,6 +8,10 @@ void testApp::setup() {
 	camera.setup();
 }
 
+void testApp::exit() {
+    camera.close();
+}
+
 void testApp::update() {
 	camera.update();
 	if(camera.isFrameNew()) {

@@ -14,9 +14,10 @@ namespace ofxEdsdk {
 	class Camera : public ofThread {
 	public:
 		Camera();
-		~Camera();
 		bool setup(int deviceId = 0, int orientationMode90 = 0);
-		
+        bool close();
+        ~Camera();
+        
 		void update();
 		bool isFrameNew();
 		unsigned int getWidth() const;
