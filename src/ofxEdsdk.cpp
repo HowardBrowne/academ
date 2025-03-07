@@ -80,27 +80,7 @@ namespace ofxEdsdk {
 			liveBufferMiddle[i] = new ofBuffer();
 		}
 	}
-	
-	Camera::~Camera() {
-		waitForThread();
-		lock();
-		if(connected) {
-			if(liveReady) {
-				Eds::EndLiveview(camera);
-			}
-			try {
-				Eds::CloseSession(camera);
-				Eds::TerminateSDK();
-			} catch (Eds::Exception& e) {
-				ofLogError() << "There was an error destroying ofxEds::Camera: " << e.what();
-			}
-		}
-		unlock();
-		for(int i = 0; i < liveBufferMiddle.maxSize(); i++) {
-			delete liveBufferMiddle[i];
-		}
-	}
-	
+
 	bool Camera::setup(int deviceId, int orientationMode90) {
 		try {
 			Eds::InitializeSDK();
@@ -135,6 +115,32 @@ namespace ofxEdsdk {
 		}
 		return false;
 	}
+    
+    bool Camera::close() {
+        waitForThread(true, 500);
+        lock();
+        if(connected) {
+            if(liveReady) {
+                Eds::EndLiveview(camera);
+            }
+            try {
+                Eds::CloseSession(camera);
+                Eds::TerminateSDK();
+            } catch (Eds::Exception& e) {
+                ofLogError() << "There was an error destroying ofxEds::Camera: " << e.what();
+            }
+        }
+        unlock();
+        for(int i = 0; i < liveBufferMiddle.maxSize(); i++) {
+            delete liveBufferMiddle[i];
+        }
+    }
+    
+    Camera::~Camera() {
+        if(connected) {
+            ofLogError() << "You must call close() before destroying the camera.";
+        }
+    }
 	
 	void Camera::update() {
 		if(connected){
