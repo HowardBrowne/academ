@@ -120,14 +120,16 @@ namespace ofxEdsdk {
         waitForThread(true, 500);
         lock();
         if(connected) {
-            if(liveReady) {
-                Eds::EndLiveview(camera);
-            }
             try {
+                if(liveReady) {
+                    Eds::EndLiveview(camera);
+                    liveReady = false;
+                }
                 Eds::CloseSession(camera);
                 Eds::TerminateSDK();
+                connected = false;
             } catch (Eds::Exception& e) {
-                ofLogError() << "There was an error destroying ofxEds::Camera: " << e.what();
+                ofLogError() << "There was an error closing ofxEds::Camera: " << e.what();
             }
         }
         unlock();
