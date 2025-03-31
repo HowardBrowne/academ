@@ -117,7 +117,7 @@ namespace ofxEdsdk {
 	}
     
     bool Camera::close() {
-        waitForThread(true, 500);
+        waitForThread(true);
         lock();
         if(connected) {
             try {
