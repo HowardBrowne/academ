@@ -105,7 +105,7 @@ namespace ofxEdsdk {
 				
                 rotateMode90 = orientationMode90;
 
-				startThread(true);
+				startThread();
 				return true;
 			} else {
 				ofLogError() << "No cameras are connected for ofxEds::Camera::setup().";
@@ -457,8 +457,23 @@ namespace ofxEdsdk {
 			}
 			
 			// the t2i can run at 30 fps = 33 ms, so this might cause frame drops
-			ofSleepMillis(5);
-		}
+			ofSleepMillis(1);
+        }
+        lock();
+        if(connected) {
+            try {
+                if(liveReady) {
+                    Eds::EndLiveview(camera);
+                    liveReady = false;
+                }
+                Eds::CloseSession(camera);
+                Eds::TerminateSDK();
+                connected = false;
+            } catch (Eds::Exception& e) {
+                ofLogError() << "There was an error closing ofxEds::Camera: " << e.what();
+            }
+        }
+        unlock();
 #ifdef TARGET_OSX
 		[pool drain];
 #elif defined(TARGET_WIN32)
