@@ -2,8 +2,6 @@
 
 void testApp::setup() {
 	ofSetVerticalSync(true);
-//	ofSetLogLevel(OF_LOG_VERBOSE);
-    
     bIsRecordingMovie = false;
 	camera.setup();
 }
@@ -13,7 +11,7 @@ void testApp::exit() {
 }
 
 void testApp::update() {
-	camera.update();
+    camera.update();
 	if(camera.isFrameNew()) {
 		// process the live view with camera.getLivePixels()
 	}
@@ -33,7 +31,7 @@ void testApp::draw() {
 	camera.draw(0, 0);
 	// camera.drawPhoto(0, 0, 432, 288);
 	
-	if(camera.isLiveReady()) {
+	if(camera.isLiveDataReady()) {
 		stringstream status;
 			status << camera.getWidth() << "x" << camera.getHeight() << " @ " <<
 			(int) ofGetFrameRate() << " app-fps " << " / " <<
@@ -45,8 +43,13 @@ void testApp::draw() {
 void testApp::keyPressed(int key) {
 	if(key == ' ') {
 		camera.takePhoto();
-	}
-    
+    }
+    if(key == 's') {
+        camera.setup();
+    }
+    if(key == 'c') {
+        camera.close();
+    }
     else if(key == 'v') {
         bIsRecordingMovie ^= true;
         if (bIsRecordingMovie) {

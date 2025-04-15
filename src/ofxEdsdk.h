@@ -14,7 +14,9 @@ namespace ofxEdsdk {
 	class Camera : public ofThread {
 	public:
 		Camera();
-		bool setup(int deviceId = 0, int orientationMode90 = 0);
+        void setDeviceId(int deviceId);
+        void setOrientationMode(int orientationMode);
+		void setup();
         bool close();
         ~Camera();
         
@@ -22,14 +24,12 @@ namespace ofxEdsdk {
 		bool isFrameNew();
 		unsigned int getWidth() const;
 		unsigned int getHeight() const;
-		bool isLiveReady() const;
+		bool isLiveDataReady() const;
 		void draw(float x, float y);
 		void draw(float x, float y, float width, float height);
 		ofPixels& getLivePixels();
 		ofTexture& getLiveTexture();
 		float getFrameRate();
-		
-        void setOrientationMode(int orientationMode90);
         
 		void takePhoto(bool blocking = false);
 		bool isPhotoNew();
@@ -42,8 +42,13 @@ namespace ofxEdsdk {
         void beginMovieRecording();
         void endMovieRecording();
         bool isMovieNew();
+        
+    protected:
+        void initialize();
+        void startCapture();
+        void captureLoop();
+        void stopCapture();
 
-	protected:
 		EdsCameraRef camera;
 		
 		RateTimer fps;
@@ -77,7 +82,7 @@ namespace ofxEdsdk {
 		 capture thread.
 		 */
 		bool connected; // camera is valid, OpenSession was successful, you can use Eds(camera) now.
-		bool liveReady; // Live view is initialized and connected, ready for downloading.
+		bool liveViewReady; // Live view is initialized and connected, ready for downloading.
 		bool liveDataReady; // Live view data has been downloaded at least once by threadedFunction().
 		bool frameNew; // There has been a new frame since the user last checked isFrameNew().
 		bool needToTakePhoto; // threadedFunction() should take a picture next chance it gets.
@@ -103,17 +108,13 @@ namespace ofxEdsdk {
 		static EdsError EDSCALLBACK handlePropertyEvent(EdsPropertyEvent event, EdsPropertyID propertyId, EdsUInt32 param, EdsVoid* context);
 		static EdsError EDSCALLBACK handleCameraStateEvent(EdsStateEvent event, EdsUInt32 param, EdsVoid* context);
 		
-		void setLiveReady(bool liveViewReady);
+		void setLiveViewReady(bool liveViewReady);
 		void setDownloadImage(EdsDirectoryItemRef directoryItem);
 		void setSendKeepAlive();
 		
 		EdsDirectoryItemRef directoryItem;
         
-        int rotateMode90;
-        
-#ifdef TARGET_OSX        
-        int initTime;
-        bool bTryInitLiveView;
-#endif
+        int deviceId;
+        int orientationMode;
 	};
 }
