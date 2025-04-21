@@ -14,6 +14,11 @@
 #define OFX_EDSDK_JPG_FORMAT 14337
 #define OFX_EDSDK_MOV_FORMAT 45316
 
+#if defined(TARGET_WIN32)
+#define _WIN32_DCOM
+#include <objbase.h>
+#endif
+
 namespace ofxEdsdk {
     
     EdsError EDSCALLBACK Camera::handleObjectEvent(EdsObjectEvent event, EdsBaseRef object, EdsVoid* context) {
@@ -436,9 +441,15 @@ namespace ofxEdsdk {
     }
     
     void Camera::threadedFunction() {
+#if defined(TARGET_WIN32)
+        CoInitializeEx(NULL, 0x0); // COINIT_APARTMENTTHREADED in SDK docs
+#endif
         while(isThreadRunning()) {
             captureLoop();
             ofSleepMillis(1);
         }
+#if defined(TARGET_WIN32)
+        CoUninitialize();
+#endif
     }
 }
