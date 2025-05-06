@@ -1,6 +1,7 @@
 #include "testApp.h"
 
 void testApp::setup() {
+    ofSetFrameRate(60);
 	ofSetVerticalSync(true);
     bIsRecordingMovie = false;
 	camera.setup();
