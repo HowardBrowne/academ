@@ -60,8 +60,9 @@ namespace ofxEdsdk {
 		 also locked to quickly pop from liveBufferMiddle into liveBufferFront.
 		 At this point, the pixels are decoded into livePixels and uploaded to liveTexture.
 		 */
-		ofBuffer liveBufferBack, liveBufferFront;
+        ofBuffer* liveBufferBack;
 		FixedQueue<ofBuffer*> liveBufferMiddle;
+        ofBuffer* liveBufferFront;
 		ofPixels livePixels;
 		ofTexture liveTexture;
 		
