@@ -31,12 +31,13 @@ void testApp::update() {
 void testApp::draw() {
 	camera.draw(0, 0);
 	// camera.drawPhoto(0, 0, 432, 288);
-	
+
 	if(camera.isLiveDataReady()) {
 		stringstream status;
-			status << camera.getWidth() << "x" << camera.getHeight() << " @ " <<
-			(int) ofGetFrameRate() << " app-fps " << " / " <<
-			(int) camera.getFrameRate() << " cam-fps";
+        status << camera.getWidth() << "x" << camera.getHeight() << " @ " <<
+			(int) ofGetFrameRate() << " app-fps / " <<
+			(int) camera.getFrameRate() << " cam-fps / " <<
+            (camera.getBandwidth() / (1<<20)) << " MiB/s";
 		ofDrawBitmapString(status.str(), 10, 20);
 	}
 }

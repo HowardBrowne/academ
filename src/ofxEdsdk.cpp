@@ -58,6 +58,7 @@ namespace ofxEdsdk {
     Camera::Camera() :
     deviceId(0),
     orientationMode(0),
+    bytesPerFrame(0),
     connected(false),
     liveViewReady(false),
     liveDataReady(false),
@@ -101,17 +102,17 @@ namespace ofxEdsdk {
         // completing, but sleeping then stopping capture is ok.
         ofSleepMillis(100);
         stopCapture();
-        for(int i = 0; i < liveBufferMiddle.maxSize(); i++) {
-            delete liveBufferMiddle[i];
-        }
-        delete liveBufferFront;
-        delete liveBufferBack;
     }
     
     Camera::~Camera() {
         if(connected) {
             ofLogError() << "You must call close() before destroying the camera.";
         }
+        for(int i = 0; i < liveBufferMiddle.maxSize(); i++) {
+            delete liveBufferMiddle[i];
+        }
+        delete liveBufferFront;
+        delete liveBufferBack;
     }
     
     void Camera::update() {
@@ -172,6 +173,13 @@ namespace ofxEdsdk {
         frameRate = fps.getFrameRate();
         unlock();
         return frameRate;
+    }
+    
+    float Camera::getBandwidth() {
+        lock();
+        float bandwidth = bytesPerFrame * fps.getFrameRate();
+        unlock();
+        return bandwidth;
     }
     
     void Camera::takePhoto(bool blocking) {
@@ -358,9 +366,10 @@ namespace ofxEdsdk {
         if(liveViewReady) {
             if(Eds::DownloadEvfData(camera, *liveBufferBack)) {
                 lock();
+                fps.tick();
+                bytesPerFrame = ofLerp(bytesPerFrame, liveBufferBack->size(), .01);
                 swap(liveBufferBack, liveBufferMiddle.back());
                 liveBufferMiddle.push();
-                fps.tick();
                 unlock();
             }
         }

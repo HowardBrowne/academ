@@ -30,6 +30,7 @@ namespace ofxEdsdk {
 		ofPixels& getLivePixels();
 		ofTexture& getLiveTexture();
 		float getFrameRate();
+        float getBandwidth();
         
 		void takePhoto(bool blocking = false);
 		bool isPhotoNew();
@@ -52,6 +53,7 @@ namespace ofxEdsdk {
 		EdsCameraRef camera;
 		
 		RateTimer fps;
+        float bytesPerFrame;
 		
 		/*
 		 Live view data is read from the camera into liveBufferBack when DownloadEvfData()
