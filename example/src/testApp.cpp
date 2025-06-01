@@ -1,9 +1,8 @@
 #include "testApp.h"
 
 void testApp::setup() {
+    ofSetFrameRate(60);
 	ofSetVerticalSync(true);
-//	ofSetLogLevel(OF_LOG_VERBOSE);
-    
     bIsRecordingMovie = false;
 	camera.setup();
 }
@@ -13,7 +12,7 @@ void testApp::exit() {
 }
 
 void testApp::update() {
-	camera.update();
+    camera.update();
 	if(camera.isFrameNew()) {
 		// process the live view with camera.getLivePixels()
 	}
@@ -32,12 +31,13 @@ void testApp::update() {
 void testApp::draw() {
 	camera.draw(0, 0);
 	// camera.drawPhoto(0, 0, 432, 288);
-	
-	if(camera.isLiveReady()) {
+
+	if(camera.isLiveDataReady()) {
 		stringstream status;
-			status << camera.getWidth() << "x" << camera.getHeight() << " @ " <<
-			(int) ofGetFrameRate() << " app-fps " << " / " <<
-			(int) camera.getFrameRate() << " cam-fps";
+        status << camera.getWidth() << "x" << camera.getHeight() << " @ " <<
+			(int) ofGetFrameRate() << " app-fps / " <<
+			(int) camera.getFrameRate() << " cam-fps / " <<
+            (camera.getBandwidth() / (1<<20)) << " MiB/s";
 		ofDrawBitmapString(status.str(), 10, 20);
 	}
 }
@@ -45,8 +45,13 @@ void testApp::draw() {
 void testApp::keyPressed(int key) {
 	if(key == ' ') {
 		camera.takePhoto();
-	}
-    
+    }
+    if(key == 's') {
+        camera.setup();
+    }
+    if(key == 'c') {
+        camera.close();
+    }
     else if(key == 'v') {
         bIsRecordingMovie ^= true;
         if (bIsRecordingMovie) {
