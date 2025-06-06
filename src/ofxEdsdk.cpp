@@ -8,8 +8,7 @@
  but one frame happens to last 200 ms, and your buffer size is 4, you will drop
  2 frames if your camera is running at 30 fps.
  */
-#define OFX_EDSDK_BUFFER_SIZE 4
-#define OFX_EDSDK_LIVE_DELAY 100
+#define OFX_EDSDK_BUFFER_SIZE 1
 
 #define OFX_EDSDK_JPG_FORMAT 14337
 #define OFX_EDSDK_MOV_FORMAT 45316

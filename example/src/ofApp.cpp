@@ -1,17 +1,17 @@
-#include "testApp.h"
+#include "ofApp.h"
 
-void testApp::setup() {
+void ofApp::setup() {
     ofSetFrameRate(60);
 	ofSetVerticalSync(true);
     bIsRecordingMovie = false;
 	camera.setup();
 }
 
-void testApp::exit() {
+void ofApp::exit() {
     camera.close();
 }
 
-void testApp::update() {
+void ofApp::update() {
     camera.update();
 	if(camera.isFrameNew()) {
 		// process the live view with camera.getLivePixels()
@@ -28,7 +28,7 @@ void testApp::update() {
 	}
 }
 
-void testApp::draw() {
+void ofApp::draw() {
 	camera.draw(0, 0);
 	// camera.drawPhoto(0, 0, 432, 288);
 
@@ -42,7 +42,7 @@ void testApp::draw() {
 	}
 }
 
-void testApp::keyPressed(int key) {
+void ofApp::keyPressed(int key) {
 	if(key == ' ') {
 		camera.takePhoto();
     }

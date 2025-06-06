@@ -53,7 +53,7 @@ namespace Eds {
 			frameNew = true;
 		} catch (Eds::Exception& e) {
 			if(e != EDS_ERR_OBJECT_NOTREADY) {
-				ofLogError() << "There was an error downloading the live view data:" << e.what();
+				ofLogError() << "There was an error downloading the live view data: " << e.what();
 			}
 		}
 		
