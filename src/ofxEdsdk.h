@@ -16,6 +16,7 @@ namespace ofxEdsdk {
 		Camera();
         void setDeviceId(int deviceId);
         void setOrientationMode(int orientationMode);
+        void setLiveView(bool useLiveView);
 		void setup();
         bool close();
         ~Camera();
@@ -85,6 +86,7 @@ namespace ofxEdsdk {
 		 capture thread.
 		 */
 		bool connected; // camera is valid, OpenSession was successful, you can use Eds(camera) now.
+        bool useLiveView; // Whether to initialize live view on setup().
 		bool liveViewReady; // Live view is initialized and connected, ready for downloading.
 		bool liveDataReady; // Live view data has been downloaded at least once by threadedFunction().
 		bool frameNew; // There has been a new frame since the user last checked isFrameNew().

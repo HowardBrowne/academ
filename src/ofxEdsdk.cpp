@@ -89,6 +89,10 @@ namespace ofxEdsdk {
         this->orientationMode = orientationMode;
     }
     
+    void Camera::setLiveView(bool useLiveView) {
+        this->useLiveView = useLiveView;
+    }
+    
     void Camera::setup() {
         initialize();
         startCapture();
@@ -337,7 +341,9 @@ namespace ofxEdsdk {
         try {
             Eds::OpenSession(camera);
             connected = true;
-            Eds::StartLiveview(camera);
+            if(useLiveView) {
+                Eds::StartLiveview(camera);
+            }
         } catch (Eds::Exception& e) {
             ofLogError() << "There was an error opening the camera, or starting live view: " << e.what();
             return;
