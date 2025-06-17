@@ -67,6 +67,7 @@ namespace ofxEdsdk {
     needToStartRecording(false),
     needToStopRecording(false),
     movieNew(false),
+    useLiveView(true),
     needToDecodePhoto(false),
     needToUpdatePhoto(false),
     photoDataReady(false),
