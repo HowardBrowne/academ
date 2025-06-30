@@ -8,7 +8,7 @@
 *******************************************************************************
 *                                                                             *
 *   Written and developed by Canon Inc.                                       *
-*   Copyright Canon Inc. 2006-2014 All Rights Reserved                        *
+*   Copyright Canon Inc. 2006-2016 All Rights Reserved                        *
 *                                                                             *
 ******************************************************************************/
 
@@ -165,6 +165,7 @@
 #define EDS_ERR_INVALID_CODE_FORMAT                         0x00002016
 #define EDS_ERR_UNKNOWN_VENDOR_CODE                         0x00002017
 #define EDS_ERR_CAPTURE_ALREADY_TERMINATED                  0x00002018
+#define EDS_ERR_PTP_DEVICE_BUSY                             0x00002019
 #define EDS_ERR_INVALID_PARENTOBJECT                        0x0000201A
 #define EDS_ERR_INVALID_DEVICEPROP_FORMAT                   0x0000201B
 #define EDS_ERR_INVALID_DEVICEPROP_VALUE                    0x0000201C

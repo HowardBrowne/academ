@@ -18,3 +18,5 @@ ofxEdsdk was developed with support from YCAM http://www.ycam.jp/
 Following these steps will include Canon's developer library and this wrapper for all its functions for use in OF. You should be able to run the blank project successfully.
 
 ofxEdsdk is tested with Canon SDK 2.14, on both OS X and Windows 8.1 with openFrameworks 0.9.0
+
+	Update: updated and tested and with Canon SDK 3.4.0 on OS X with openFrameworks 0.9.2

@@ -84,7 +84,7 @@ namespace Eds {
 	
 	
 	void CopyStream(EdsStreamRef stream, ofBuffer& buffer) {
-		EdsUInt32 length;
+		EdsUInt64 length;
 		Eds::GetLength(stream, &length);
 		char* streamPointer;
 		Eds::GetPointer(stream, (EdsVoid**) &streamPointer);
