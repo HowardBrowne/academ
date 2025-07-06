@@ -43,14 +43,14 @@ namespace Eds {
 	void FormatVolume(EdsVolumeRef inVolumeRef);
 	void GetDirectoryItemInfo(EdsDirectoryItemRef inDirItemRef, EdsDirectoryItemInfo* outDirItemInfo);
 	void DeleteDirectoryItem(EdsDirectoryItemRef inDirItemRef);
-	void Download(EdsDirectoryItemRef inDirItemRef, EdsUInt32 inReadSize, EdsStreamRef outStream);
+	void Download(EdsDirectoryItemRef inDirItemRef, EdsUInt64 inReadSize, EdsStreamRef outStream);
 	void DownloadCancel(EdsDirectoryItemRef inDirItemRef);
 	void DownloadComplete(EdsDirectoryItemRef inDirItemRef);
 	void DownloadThumbnail(EdsDirectoryItemRef inDirItemRef, EdsStreamRef outStream);
 	void GetAttribute(EdsDirectoryItemRef inDirItemRef, EdsFileAttributes* outFileAttribute);
 	void SetAttribute(EdsDirectoryItemRef inDirItemRef, EdsFileAttributes inFileAttribute);
 	void CreateFileStream(const EdsChar* inFileName, EdsFileCreateDisposition inCreateDisposition, EdsAccess inDesiredAccess, EdsStreamRef* outStream);
-	void CreateMemoryStream(EdsUInt32 inBufferSize, EdsStreamRef* outStream);
+	void CreateMemoryStream(EdsUInt64 inBufferSize, EdsStreamRef* outStream);
 	void CreateFileStreamEx(
 		#ifdef __MACOS__
 			const CFURLRef inURL,
@@ -58,14 +58,14 @@ namespace Eds {
 			const WCHAR* inURL,
 		#endif
 		EdsFileCreateDisposition inCreateDisposition, EdsAccess inDesiredAccess, EdsStreamRef* outStream);
-	void CreateMemoryStreamFromPointer(EdsVoid* inUserBuffer, EdsUInt32 inBufferSize, EdsStreamRef* outStream);
+	void CreateMemoryStreamFromPointer(EdsVoid* inUserBuffer, EdsUInt64 inBufferSize, EdsStreamRef* outStream);
 	void GetPointer(EdsStreamRef inStream, EdsVoid** outPointer);
-	void Read(EdsStreamRef inStreamRef, EdsUInt32 inReadSize, EdsVoid* outBuffer, EdsUInt32* outReadSize);
-	void Write(EdsStreamRef inStreamRef, EdsUInt32 inWriteSize, const EdsVoid* inBuffer, EdsUInt32* outWrittenSize);
+	void Read(EdsStreamRef inStreamRef, EdsUInt64 inReadSize, EdsVoid* outBuffer, EdsUInt64* outReadSize);
+	void Write(EdsStreamRef inStreamRef, EdsUInt64 inWriteSize, const EdsVoid* inBuffer, EdsUInt64* outWrittenSize);
 	void Seek(EdsStreamRef inStreamRef, EdsInt32 inSeekOffset, EdsSeekOrigin inSeekOrigin);
-	void GetPosition(EdsStreamRef inStreamRef, EdsUInt32* outPosition);
-	void GetLength(EdsStreamRef inStreamRef, EdsUInt32* outLength);
-	void CopyData(EdsStreamRef inStreamRef, EdsUInt32 inWriteSize, EdsStreamRef outStreamRef);
+	void GetPosition(EdsStreamRef inStreamRef, EdsUInt64* outPosition);
+	void GetLength(EdsStreamRef inStreamRef, EdsUInt64* outLength);
+	void CopyData(EdsStreamRef inStreamRef, EdsUInt64 inWriteSize, EdsStreamRef outStreamRef);
 	void SetProgressCallback(EdsBaseRef inRef, EdsProgressCallback inProgressCallback, EdsProgressOption inProgressOption, EdsVoid* inContext);
 	void CreateImageRef(EdsStreamRef inStreamRef, EdsImageRef* outImageRef);
 	void GetImageInfo(EdsImageRef inImageRef, EdsImageSource inImageSource, EdsImageInfo* outImageInfo);

@@ -23,14 +23,14 @@ namespace Eds {
 	void FormatVolume(EdsVolumeRef inVolumeRef) {EdsError err = EdsFormatVolume(inVolumeRef); if(err != EDS_ERR_OK) {throw Exception(err, "FormatVolume");}}
 	void GetDirectoryItemInfo(EdsDirectoryItemRef inDirItemRef, EdsDirectoryItemInfo* outDirItemInfo) {EdsError err = EdsGetDirectoryItemInfo(inDirItemRef, outDirItemInfo); if(err != EDS_ERR_OK) {throw Exception(err, "GetDirectoryItemInfo");}}
 	void DeleteDirectoryItem(EdsDirectoryItemRef inDirItemRef) {EdsError err = EdsDeleteDirectoryItem(inDirItemRef); if(err != EDS_ERR_OK) {throw Exception(err, "DeleteDirectoryItem");}}
-	void Download(EdsDirectoryItemRef inDirItemRef, EdsUInt32 inReadSize, EdsStreamRef outStream) {EdsError err = EdsDownload(inDirItemRef, inReadSize, outStream); if(err != EDS_ERR_OK) {throw Exception(err, "Download");}}
+	void Download(EdsDirectoryItemRef inDirItemRef, EdsUInt64 inReadSize, EdsStreamRef outStream) {EdsError err = EdsDownload(inDirItemRef, inReadSize, outStream); if(err != EDS_ERR_OK) {throw Exception(err, "Download");}}
 	void DownloadCancel(EdsDirectoryItemRef inDirItemRef) {EdsError err = EdsDownloadCancel(inDirItemRef); if(err != EDS_ERR_OK) {throw Exception(err, "DownloadCancel");}}
 	void DownloadComplete(EdsDirectoryItemRef inDirItemRef) {EdsError err = EdsDownloadComplete(inDirItemRef); if(err != EDS_ERR_OK) {throw Exception(err, "DownloadComplete");}}
 	void DownloadThumbnail(EdsDirectoryItemRef inDirItemRef, EdsStreamRef outStream) {EdsError err = EdsDownloadThumbnail(inDirItemRef, outStream); if(err != EDS_ERR_OK) {throw Exception(err, "DownloadThumbnail");}}
 	void GetAttribute(EdsDirectoryItemRef inDirItemRef, EdsFileAttributes* outFileAttribute) {EdsError err = EdsGetAttribute(inDirItemRef, outFileAttribute); if(err != EDS_ERR_OK) {throw Exception(err, "GetAttribute");}}
 	void SetAttribute(EdsDirectoryItemRef inDirItemRef, EdsFileAttributes inFileAttribute) {EdsError err = EdsSetAttribute(inDirItemRef, inFileAttribute); if(err != EDS_ERR_OK) {throw Exception(err, "SetAttribute");}}
 	void CreateFileStream(const EdsChar* inFileName, EdsFileCreateDisposition inCreateDisposition, EdsAccess inDesiredAccess, EdsStreamRef* outStream) {EdsError err = EdsCreateFileStream(inFileName, inCreateDisposition, inDesiredAccess, outStream); if(err != EDS_ERR_OK) {throw Exception(err, "CreateFileStream");}}
-	void CreateMemoryStream(EdsUInt32 inBufferSize, EdsStreamRef* outStream) {EdsError err = EdsCreateMemoryStream(inBufferSize, outStream); if(err != EDS_ERR_OK) {throw Exception(err, "CreateMemoryStream");}}
+	void CreateMemoryStream(EdsUInt64 inBufferSize, EdsStreamRef* outStream) {EdsError err = EdsCreateMemoryStream(inBufferSize, outStream); if(err != EDS_ERR_OK) {throw Exception(err, "CreateMemoryStream");}}
 	void CreateFileStreamEx(
 		#ifdef __MACOS__
 			const CFURLRef inURL,
@@ -38,14 +38,14 @@ namespace Eds {
 			const WCHAR* inURL,
 		#endif
 		EdsFileCreateDisposition inCreateDisposition, EdsAccess inDesiredAccess, EdsStreamRef* outStream) {EdsError err = EdsCreateFileStreamEx(inURL, inCreateDisposition, inDesiredAccess, outStream); if(err != EDS_ERR_OK) {throw Exception(err, "CreateFileStreamEx");}}
-	void CreateMemoryStreamFromPointer(EdsVoid* inUserBuffer, EdsUInt32 inBufferSize, EdsStreamRef* outStream) {EdsError err = EdsCreateMemoryStreamFromPointer(inUserBuffer, inBufferSize, outStream); if(err != EDS_ERR_OK) {throw Exception(err, "CreateMemoryStreamFromPointer");}}
+	void CreateMemoryStreamFromPointer(EdsVoid* inUserBuffer, EdsUInt64 inBufferSize, EdsStreamRef* outStream) {EdsError err = EdsCreateMemoryStreamFromPointer(inUserBuffer, inBufferSize, outStream); if(err != EDS_ERR_OK) {throw Exception(err, "CreateMemoryStreamFromPointer");}}
 	void GetPointer(EdsStreamRef inStream, EdsVoid** outPointer) {EdsError err = EdsGetPointer(inStream, outPointer); if(err != EDS_ERR_OK) {throw Exception(err, "GetPointer");}}
-	void Read(EdsStreamRef inStreamRef, EdsUInt32 inReadSize, EdsVoid* outBuffer, EdsUInt32* outReadSize) {EdsError err = EdsRead(inStreamRef, inReadSize, outBuffer, outReadSize); if(err != EDS_ERR_OK) {throw Exception(err, "Read");}}
-	void Write(EdsStreamRef inStreamRef, EdsUInt32 inWriteSize, const EdsVoid* inBuffer, EdsUInt32* outWrittenSize) {EdsError err = EdsWrite(inStreamRef, inWriteSize, inBuffer, outWrittenSize); if(err != EDS_ERR_OK) {throw Exception(err, "Write");}}
-	void Seek(EdsStreamRef inStreamRef, EdsInt32 inSeekOffset, EdsSeekOrigin inSeekOrigin) {EdsError err = EdsSeek(inStreamRef, inSeekOffset, inSeekOrigin); if(err != EDS_ERR_OK) {throw Exception(err, "Seek");}}
-	void GetPosition(EdsStreamRef inStreamRef, EdsUInt32* outPosition) {EdsError err = EdsGetPosition(inStreamRef, outPosition); if(err != EDS_ERR_OK) {throw Exception(err, "GetPosition");}}
-	void GetLength(EdsStreamRef inStreamRef, EdsUInt32* outLength) {EdsError err = EdsGetLength(inStreamRef, outLength); if(err != EDS_ERR_OK) {throw Exception(err, "GetLength");}}
-	void CopyData(EdsStreamRef inStreamRef, EdsUInt32 inWriteSize, EdsStreamRef outStreamRef) {EdsError err = EdsCopyData(inStreamRef, inWriteSize, outStreamRef); if(err != EDS_ERR_OK) {throw Exception(err, "CopyData");}}
+	void Read(EdsStreamRef inStreamRef, EdsUInt64 inReadSize, EdsVoid* outBuffer, EdsUInt64* outReadSize) {EdsError err = EdsRead(inStreamRef, inReadSize, outBuffer, outReadSize); if(err != EDS_ERR_OK) {throw Exception(err, "Read");}}
+	void Write(EdsStreamRef inStreamRef, EdsUInt64 inWriteSize, const EdsVoid* inBuffer, EdsUInt64* outWrittenSize) {EdsError err = EdsWrite(inStreamRef, inWriteSize, inBuffer, outWrittenSize); if(err != EDS_ERR_OK) {throw Exception(err, "Write");}}
+	void Seek(EdsStreamRef inStreamRef, EdsInt64 inSeekOffset, EdsSeekOrigin inSeekOrigin) {EdsError err = EdsSeek(inStreamRef, inSeekOffset, inSeekOrigin); if(err != EDS_ERR_OK) {throw Exception(err, "Seek");}}
+	void GetPosition(EdsStreamRef inStreamRef, EdsUInt64* outPosition) {EdsError err = EdsGetPosition(inStreamRef, outPosition); if(err != EDS_ERR_OK) {throw Exception(err, "GetPosition");}}
+	void GetLength(EdsStreamRef inStreamRef, EdsUInt64* outLength) {EdsError err = EdsGetLength(inStreamRef, outLength); if(err != EDS_ERR_OK) {throw Exception(err, "GetLength");}}
+	void CopyData(EdsStreamRef inStreamRef, EdsUInt64 inWriteSize, EdsStreamRef outStreamRef) {EdsError err = EdsCopyData(inStreamRef, inWriteSize, outStreamRef); if(err != EDS_ERR_OK) {throw Exception(err, "CopyData");}}
 	void SetProgressCallback(EdsBaseRef inRef, EdsProgressCallback inProgressCallback, EdsProgressOption inProgressOption, EdsVoid* inContext) {EdsError err = EdsSetProgressCallback(inRef, inProgressCallback, inProgressOption, inContext); if(err != EDS_ERR_OK) {throw Exception(err, "SetProgressCallback");}}
 	void CreateImageRef(EdsStreamRef inStreamRef, EdsImageRef* outImageRef) {EdsError err = EdsCreateImageRef(inStreamRef, outImageRef); if(err != EDS_ERR_OK) {throw Exception(err, "CreateImageRef");}}
 	void GetImageInfo(EdsImageRef inImageRef, EdsImageSource inImageSource, EdsImageInfo* outImageInfo) {EdsError err = EdsGetImageInfo(inImageRef, inImageSource, outImageInfo); if(err != EDS_ERR_OK) {throw Exception(err, "GetImageInfo");}}
