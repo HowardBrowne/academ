@@ -43,6 +43,8 @@ namespace ofxEdsdk {
         void beginMovieRecording();
         void endMovieRecording();
         bool isMovieNew();
+
+        bool isConnected() { return connected; }
         
     protected:
         void initialize();
